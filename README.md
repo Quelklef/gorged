@@ -1,0 +1,1 @@
+- Note [Chrome uses its own certificate store](https://serverfault.com/questions/946756/ssl-certificate-in-system-store-not-trusted-by-chrome), so you'll have to add the certificate manually in Settings > Security > Manage certificates > Authorieis > import (as of Chrome 88.0.4324 150)
