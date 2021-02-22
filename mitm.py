@@ -1,9 +1,12 @@
-import bs4
-import sys
-from urllib.parse import urlparse
-import traceback
 import contextlib
+import sys
+import traceback
+from urllib.parse import urlparse
+
+import bs4
+
 from intercepts import intercepts
+
 
 @contextlib.contextmanager
 def infallibly():
@@ -12,9 +15,10 @@ def infallibly():
     except:
         print(traceback.format_exc(), file=sys.stderr)
 
+
 def response(flow):
     if (
-        flow.request.data.method in (b'GET', b'POST')
+        flow.request.data.method in b"GET POST"
         and flow.response.data.status_code in range(200, 300)
     ):
         url_obj = urlparse(flow.request.pretty_url)
