@@ -24,6 +24,8 @@ The list is as follows:
 - `twitter_remove_home_feed`: Remove the Home feed
 - `twitter_remove_trending`: Remove the "What's happening" block
 - `twitter_remove_follow_suggestions`: Remove the "Who to follow" block
+- `reddit_remove_landing_feed`: Removes the feed from the homepage of Reddit
+- `reddit_remove_sub_feed`: Removes the feed from subreddits
 - `stackexchange_remove_landing_feed`: Removes the "Top Question" feed from Stack Exchange site landing pages
 - `stackexchange_remove_all_questions_feed`: Removes the "All Questions" feed under /questsions
 - `stackexchange_remove_hot`: Removes the "Hot Network Questions" sidebar
@@ -32,8 +34,6 @@ The list is as follows:
 - `stackexchange_remove_sticky_note`: Removes the yellow "sticky note" on the right side of the page
 - `stackexchange_remove_left_sidebar`: Removes the left navigation bar
 - `stackexchange_remove_se_landing_feed`: Removes the feed on the landing page of stackexchange.com
-- `reddit_remove_landing_feed`: Removes the feed from the homepage of Reddit
-- `reddit_remove_sub_feed`: Removes the feed from subreddits
 
 [comment]: # (END FLAG DOCS)
 

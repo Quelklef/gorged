@@ -79,6 +79,28 @@ def twitter_remove_follow_suggestions(soup, flow, url_obj):
     )
 
 
+new_reddit_re = re.compile(r"(?<!old\.)reddit\.com")
+
+
+@intercept(new_reddit_re)
+def reddit_remove_landing_feed(soup, flow, url_obj):
+    """Removes the feed from the homepage of Reddit"""
+    if is_landing(url_obj):
+        remove("html", from_=soup, via="node-removal")
+
+
+@intercept(new_reddit_re)
+def reddit_remove_sub_feed(soup, flow, url_obj):
+    """Removes the feed from subreddits"""
+    is_sub_landing = bool(re.match(r"/r/[^/?]+/?", url_obj.path))
+    if is_sub_landing:
+        remove(
+            ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
+            from_=soup,
+            via="display-none",
+        )
+
+
 stackexchange_domains = [
     "stackexchange.com",
     ".stackexchange.com",
@@ -150,25 +172,3 @@ def stackexchange_remove_se_landing_feed(soup, flow, url_obj):
     is_parent_se_site = url_obj.netloc == "stackexchange.com"
     if is_landing(url_obj) and is_parent_se_site:
         remove("#question-list", from_=soup, via="node-removal")
-
-
-new_reddit_re = re.compile(r"(?<!old\.)reddit\.com")
-
-
-@intercept(new_reddit_re)
-def reddit_remove_landing_feed(soup, flow, url_obj):
-    """Removes the feed from the homepage of Reddit"""
-    if is_landing(url_obj):
-        remove("html", from_=soup, via="node-removal")
-
-
-@intercept(new_reddit_re)
-def reddit_remove_sub_feed(soup, flow, url_obj):
-    """Removes the feed from subreddits"""
-    is_sub_landing = bool(re.match(r"/r/[^/?]+/?", url_obj.path))
-    if is_sub_landing:
-        remove(
-            ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
-            from_=soup,
-            via="display-none",
-        )
