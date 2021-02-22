@@ -12,29 +12,26 @@ _Why not a browser extension?_ Browser extensions are easy to get around: use in
 
 _Or skip right to [installation](#installation)_
 
-These are all the changes that the program is capable of making. To disable some, run like
+These are all the changes that the program is capable of making. To disable some, pass regexes to `--disable`, like
 ```bash
-./run.sh --disable reddit,stackexchange_remove_rss_link
+./run.sh --disable 'twitter_remove_home_feed|stackexchange.*'
 ```
 
 The list is as follows:
 
 [comment]: # (BEGIN FLAG DOCS)
 
-- `reddit`: Allow modification of Reddit
-- `reddit_remove_landing_feed`: Removes the feed from the homepage of Reddit
-- `reddit_remove_sub_feed`: Removes the feed from subreddits
-- `stackexchange`: Allow modification of Stack Exchange websites
-- `stackexchange_remove_hot`: Removes the "Hot Network Questions" sidebar
-- `stackexchange_remove_left_sidebar`: Removes the left navigation bar
-- `stackexchange_remove_related`: Removes the "Related" sidebar
-- `stackexchange_remove_rss_link`: Removes the "Question feed" link
-- `stackexchange_remove_se_landing_feed`: Removes the feed on the landing page of stackexchange.com
-- `stackexchange_remove_sticky_note`: Removes the yellow "sticky note" on the right side of the page
-- `twitter`: Allow modification of Twitter
-- `twitter_remove_follow_suggestions`: Remove the "Who to follow" block
 - `twitter_remove_home_feed`: Remove the Home feed
 - `twitter_remove_trending`: Remove the "What's happening" block
+- `twitter_remove_follow_suggestions`: Remove the "Who to follow" block
+- `stackexchange_remove_hot`: Removes the "Hot Network Questions" sidebar
+- `stackexchange_remove_related`: Removes the "Related" sidebar
+- `stackexchange_remove_rss_link`: Removes the "Question feed" link
+- `stackexchange_remove_sticky_note`: Removes the yellow "sticky note" on the right side of the page
+- `stackexchange_remove_left_sidebar`: Removes the left navigation bar
+- `stackexchange_remove_se_landing_feed`: Removes the feed on the landing page of stackexchange.com
+- `reddit_remove_landing_feed`: Removes the feed from the homepage of Reddit
+- `reddit_remove_sub_feed`: Removes the feed from subreddits
 
 [comment]: # (END FLAG DOCS)
 

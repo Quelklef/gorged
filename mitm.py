@@ -1,14 +1,16 @@
 import contextlib
+import os
+import re
 import sys
 import traceback
 from urllib.parse import urlparse
 
 import bs4
 
-import flags
-from intercepts import make_intercepts
+from intercepts import intercepts
 
-intercepts = make_intercepts(flags.make_flagset())
+is_disabled_re = re.compile(os.getenv("GORGE_DISABLED_RE", "") or "never^")
+is_disabled = lambda intercept: bool(is_disabled_re.search(intercept.slug))
 
 
 @contextlib.contextmanager
@@ -27,7 +29,7 @@ def response(flow):
         url_obj = urlparse(flow.request.pretty_url)
         soup = bs4.BeautifulSoup(flow.response.text, "html.parser")
         for intercept in intercepts:
-            if intercept.regex.search(url_obj.geturl()):
+            if not is_disabled(intercept) and intercept.regex.search(url_obj.geturl()):
                 with infallibly():
-                    intercept.modify(soup, flow, url_obj)
+                    intercept.func(soup, flow, url_obj)
         flow.response.text = str(soup)

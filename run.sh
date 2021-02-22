@@ -2,11 +2,11 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-disabled_flags=''
+disabled_re=""
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
     --disable)
-      disabled_flags="$2"
+      disabled_re="$2"
       shift; shift
       ;;
     *)
@@ -16,7 +16,7 @@ while [[ "$#" -gt 0 ]]; do
   esac
 done
 
-export GORGE_DISABLED_FLAGS="$disabled_flags"
+export GORGE_DISABLED_RE="$disabled_re"
 
 # mitmdump catches all python exceptions, so
 # run the script now to see if there are any

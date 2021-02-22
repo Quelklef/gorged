@@ -1,4 +1,4 @@
-import flags
+from intercepts import intercepts
 
 
 def row_of(string, substring):
@@ -23,7 +23,9 @@ def supplant_flag_docs(markdown, flag_docs):
 if __name__ == "__main__":
     with open("README.md", "r") as f:
         existing_md = f.read()
-    flag_docs = flags.generate_flag_docs()
-    new_md = supplant_flag_docs(existing_md, flag_docs)
+    docs_md = "\n".join(
+        f"- `{intercept.slug}`: {intercept.desc}" for intercept in intercepts
+    )
+    new_md = supplant_flag_docs(existing_md, docs_md)
     with open("README.md", "w") as f:
         f.write(new_md)
