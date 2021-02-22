@@ -134,8 +134,8 @@ def stackexchange_remove_left_sidebar(soup, flow, url_obj):
 def stackexchange_remove_se_landing_feed(soup, flow, url_obj):
     """Removes the feed on the landing page of stackexchange.com"""
     is_parent_se_site = url_obj.netloc == "stackexchange.com"
-    if is_landing(url_obj) and not is_parent_se_site:
-        remove("#mainbar", from_=soup, via="node-removal")
+    if is_landing(url_obj) and is_parent_se_site:
+        remove("#question-list", from_=soup, via="node-removal")
 
 
 new_reddit_re = re.compile(r"(?<!old\.)reddit\.com")
