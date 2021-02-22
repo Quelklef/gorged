@@ -7,26 +7,25 @@ class Intercept:
         self.modify = func
 
 
-def remove(node):
-    if node:
-        node.decompose()
-
-
-def remove_(selector, *, from_, via):
+def remove(selector, *, from_, via):
     soup = from_
     strategy = via
 
-    if strategy == "global-style":
+    if strategy == "display-none":
         style = soup.new_tag("style")
-        style.string = f"{selector} {{ display: none !important; }}"
+        style.string = selector + "{ display: none !important; }"
         soup.find("html").append(style)
+
+    if strategy == "opacity-0":
+        style = soup.new_tag("style")
+        style.string = selector + "{ opacity: 0 !important; }"
+        soup.find("html").append(style)
+
+    elif strategy == "node-removal":
+        soup.select_one(selector).decompose()
+
     else:
         raise ValueError(f"Unrecognized removal strategy {repr(via)}")
-
-
-def hide(node):
-    if node:
-        node["style"] = "opacity: 0 !important"
 
 
 def is_landing(url_obj):
@@ -51,26 +50,26 @@ def make_intercepts(flagset):
 
             if flagset.twitter_remove_home_feed:
                 """Remove the Home feed"""
-                remove_(
+                remove(
                     '[aria-label="Timeline: Your Home Timeline"]',
                     from_=soup,
-                    via="global-style",
+                    via="display-none",
                 )
 
             if flagset.twitter_remove_trending:
                 """Remove the "What's happening" block"""
-                remove_(
+                remove(
                     '[aria-label="Timeline: Trending now"]',
                     from_=soup,
-                    via="global-style",
+                    via="display-none",
                 )
 
             if flagset.twitter_remove_follow_suggestions:
                 """Remove the "Who to follow" block"""
-                remove_(
+                remove(
                     '[aria-label="Who to follow"]',
                     from_=soup,
-                    via="global-style",
+                    via="display-none",
                 )
 
     stackexchange_domains = [
@@ -99,27 +98,27 @@ def make_intercepts(flagset):
 
             if flagset.stackexchange_remove_hot:
                 """Removes the "Hot Network Questions" sidebar"""
-                remove(soup.find(id="hot-network-questions"))
+                remove("#hot-network-questions", from_=soup, via="node-removal")
 
             if flagset.stackexchange_remove_related:
                 """Removes the "Related" sidebar"""
-                remove(soup.find(class_="sidebar-related"))
+                remove(".sidebar-related", from_=soup, via="node-removal")
 
             if flagset.stackexchange_remove_rss_link:
                 """Removes the "Question feed" link"""
-                remove(soup.find(id="feed-link"))
+                remove("#feed-link", from_=soup, via="node-removal")
 
             if flagset.stackexchange_remove_stick_note:
                 """Removes the yellow "sticky note" on the right side of the page"""
-                remove(soup.find(id="sidebar").find(class_="s-sidebarwidget"))
+                remove("#sidebar .s-sidebarwidget", from_=soup, via="node-removal")
 
             if flagset.stackexchange_remove_left_sidebar:
                 """Removes the left navigation bar"""
-                hide(soup.find(id="left-sidebar"))
+                remove("#left-sidebar", from_=soup, via="opacity-0")
 
             is_parent_se_site = url_obj.netloc == "stackexchange.com"
             if is_landing(url_obj) and not is_parent_se_site:
-                remove(soup.find(id="mainbar"))
+                remove("#mainbar", from_=soup, via="node-removal")
 
     if flagset.reddit:
         """Allow modification of Reddit"""
@@ -129,19 +128,17 @@ def make_intercepts(flagset):
             if is_landing(url_obj):
                 if flagset.reddit_remove_landing_feed:
                     """Removes the feed from the homepage of Reddit"""
-                    remove(soup.find("html"))
+                    remove("html", from_=soup, via="node-removal")
             else:
                 if flagset.reddit_remove_sub_feed:
                     """Removes the feed from subreddits"""
                     # Remove body from /r/{sub}
                     # Reddit seems to build the page content with JS, so we have to do this with CSS
                     if bool(re.match(r"/r/[^/?]+/?", url_obj.path)):
-                        style = soup.new_tag("style")
-                        style.string = r"""
-                        .ListingLayout-outerContainer > :nth-child(2) > :nth-child(3) {
-                            display: none !important;
-                        }
-                        """
-                        soup.find("head").append(style)
+                        remove(
+                            ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
+                            from_=soup,
+                            via="display-none",
+                        )
 
     return intercepts
