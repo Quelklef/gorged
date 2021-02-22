@@ -58,11 +58,19 @@ Now we can start Gorged with
 ./run.sh
 ```
 
-This starts the proxy, but your system won't be connected to it yet. Configure both HTTP and HTTPS traffic to be routed through `127.0.0.1:8080` ([here](https://www.serverlab.ca/tutorials/linux/administration-linux/how-to-configure-proxy-on-ubuntu-18-04/) is an example tutorial for Ubuntu).
+This starts the proxy, but your system won't be connected to it yet. You can route all your computer's traffic through the proxy or, if you're using a browser that supports it (such as Firefox), only your browser's traffic.
+  - If you want to route all traffic, look for a system option called something like "Network Proxy"
+  - If you want to do browser-local proxying, you have to set it up in the browser
+    - As of Firefox 85.0, naviage to Preferences > General > Network Settings > Settings
+    - As of Chrome ~88.0, browser-local proxies seem to to be unsupported
+  - Having found the setting, select "Manual" or a similar option then plug in `127.0.0.1` for the address and `8080` for the port for both HTTP and HTTPS.
 
 At this point, Gorged should be successfully intercepting all HTTP traffic, but attempts to connect to HTTPS websites will fail. We need to add mitmproxy, the tool that Gorged uses to intercept network requests, as a trusted source of HTTPS traffic.
 
-- First, register the `~/.mitmproxy/mitmproxy-ca-cert.pem` as a trusted certificate on your system. If you're using Ubuntu, instructions can be found  [here](https://askubuntu.com/a/377570/437551).
-- Second, if you're using a browser with its own certificate store, [such as Chrome](https://serverfault.com/questions/946756/ssl-certificate-in-system-store-not-trusted-by-chrome), you'll need to manually register the certificate in the browser as well. As of of Chrome 88.0.4324 150, this is done in Settings > Security > Manage certificates > Authorities > import.
+- If you're using a browser with its own certificate store, such as Chrome or Firefox, you'll need to manually register the certificate in the browser as well
+  - As of Chrome ~88.0, this is done in Settings > Security > Manage certificates > Authorities > import.
+  - As of Firefox 85.0, this is done in Preferences > Privacy & Security > Certificates > View Certificates > import.
+- If you're on a browser that uses the system certificate store, or if you set up the proxy system-wide, then you should register `~/.mitmproxy/mitmproxy-ca-cert.pem` as a trusted certificate on your system.
+  - If you're using Ubuntu, instructions can be found  [here](https://askubuntu.com/a/377570/437551).
 
 TODO: on-startup execution
