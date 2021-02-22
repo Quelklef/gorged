@@ -108,7 +108,7 @@ def make_intercepts(flagset):
                 """Removes the "Question feed" link"""
                 remove("#feed-link", from_=soup, via="node-removal")
 
-            if flagset.stackexchange_remove_stick_note:
+            if flagset.stackexchange_remove_sticky_note:
                 """Removes the yellow "sticky note" on the right side of the page"""
                 remove("#sidebar .s-sidebarwidget", from_=soup, via="node-removal")
 

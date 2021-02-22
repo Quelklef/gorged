@@ -30,7 +30,7 @@ The list is as follows:
 - `stackexchange_remove_related`: Removes the "Related" sidebar
 - `stackexchange_remove_rss_link`: Removes the "Question feed" link
 - `stackexchange_remove_se_landing_feed`: Removes the feed on the landing page of stackexchange.com
-- `stackexchange_remove_stick_note`: Removes the yellow "sticky note" on the right side of the page
+- `stackexchange_remove_sticky_note`: Removes the yellow "sticky note" on the right side of the page
 - `twitter`: Allow modification of Twitter
 - `twitter_remove_follow_suggestions`: Remove the "Who to follow" block
 - `twitter_remove_home_feed`: Remove the Home feed
