@@ -28,6 +28,7 @@ The list is as follows:
 - `reddit_remove_sub_feed`: Removes the feed from subreddits
 - `reddit_remove_after_post_feed`: Removes the "More posts from the <subreddit> community" below posts
 - `facebook_remove_homepage_feed`: Removes the feed from the Facebook homepage
+- `facebook_remove_profile_timeline`: Removes the timeline from user profiles
 - `stackexchange_remove_landing_feed`: Removes the "Top Question" feed from Stack Exchange site landing pages
 - `stackexchange_remove_all_questions_feed`: Removes the "All Questions" feed under /questsions
 - `stackexchange_remove_hot`: Removes the "Hot Network Questions" sidebar

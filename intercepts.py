@@ -5,13 +5,16 @@ Intercept = namedtuple("Intercept", "slug desc regex func")
 
 
 def insistent_append(soup, node):
+
     html = soup.find("html")
     if not html:
         soup.append(node)
+        return
 
     body = html.find("body")
     if not body:
         html.append(node)
+        return
 
     body.append(node)
 
@@ -194,12 +197,11 @@ def facebook_remove_homepage_feed(soup, flow, url_obj):
         remove("div[role=feed]", from_=soup, via="display-none")
 
 
-# v Not currently working :(
-# @intercept(facebook_re)
-# def facebook_remove_profile_timeline(soup, flow, url_obj):
-#     """Removes the timeline from user profiles"""
-#     if re.match("[^/]+/[^/]+/[^/]+/?", url_obj.path):
-#         remove("[data-pagelet=ProfileTimeline]", from_=soup, via="display-none")
+@intercept(facebook_re)
+def facebook_remove_profile_timeline(soup, flow, url_obj):
+    """Removes the timeline from user profiles"""
+    if re.match("/[^/]+/?", url_obj.path):
+        remove("[data-pagelet=ProfileComposer] ~ *", from_=soup, via="display-none")
 
 
 stackexchange_domains = [
