@@ -12,6 +12,18 @@ def remove(node):
         node.decompose()
 
 
+def remove_(selector, *, from_, via):
+    soup = from_
+    strategy = via
+
+    if strategy == "global-style":
+        style = soup.new_tag("style")
+        style.string = f"{selector} {{ display: none !important; }}"
+        soup.find("html").append(style)
+    else:
+        raise ValueError(f"Unrecognized removal strategy {repr(via)}")
+
+
 def hide(node):
     if node:
         node["style"] = "opacity: 0 !important"
@@ -30,6 +42,36 @@ def make_intercepts(flagset):
             return func
 
         return decorator
+
+    if flagset.twitter:
+        """Allow modification of Twitter"""
+
+        @intercept("twitter.com")
+        def twitter(soup, flow, url_obj):
+
+            if flagset.twitter_remove_home_feed:
+                """Remove the Home feed"""
+                remove_(
+                    '[aria-label="Timeline: Your Home Timeline"]',
+                    from_=soup,
+                    via="global-style",
+                )
+
+            if flagset.twitter_remove_trending:
+                """Remove the "What's happening" block"""
+                remove_(
+                    '[aria-label="Timeline: Trending now"]',
+                    from_=soup,
+                    via="global-style",
+                )
+
+            if flagset.twitter_remove_follow_suggestions:
+                """Remove the "Who to follow" block"""
+                remove_(
+                    '[aria-label="Who to follow"]',
+                    from_=soup,
+                    via="global-style",
+                )
 
     stackexchange_domains = [
         "stackexchange.com",

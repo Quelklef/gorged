@@ -30,6 +30,10 @@ The list is as follows:
 - `stackexchange_remove_related`: Removes the "Related" sidebar
 - `stackexchange_remove_rss_link`: Removes the "Question feed" link
 - `stackexchange_remove_stick_note`: Removes the yellow "sticky note" on the right side of the page
+- `twitter`: Allow modification of Twitter
+- `twitter_remove_follow_suggestions`: Remove the "Who to follow" block
+- `twitter_remove_home_feed`: Remove the Home feed
+- `twitter_remove_trending`: Remove the "What's happening" block
 
 [comment]: # (END FLAG DOCS)
 
