@@ -108,6 +108,24 @@ def reddit_remove_sub_feed(soup, flow, url_obj):
         )
 
 
+facebook_re = re.compile(r"facebook\.com")
+
+
+@intercept(facebook_re)
+def facebook_remove_homepage_feed(soup, flow, url_obj):
+    """Removes the feed from the Facebook homepage"""
+    if is_landing(url_obj):
+        remove("div[role=feed]", from_=soup, via="display-none")
+
+
+# v Not currently working :(
+# @intercept(facebook_re)
+# def facebook_remove_profile_timeline(soup, flow, url_obj):
+#     """Removes the timeline from user profiles"""
+#     if re.match("[^/]+/[^/]+/[^/]+/?", url_obj.path):
+#         remove("[data-pagelet=ProfileTimeline]", from_=soup, via="display-none")
+
+
 stackexchange_domains = [
     "stackexchange.com",
     ".stackexchange.com",

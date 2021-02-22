@@ -26,6 +26,7 @@ The list is as follows:
 - `twitter_remove_follow_suggestions`: Remove the "Who to follow" block
 - `reddit_remove_landing_feed`: Removes the feed from the homepage of Reddit
 - `reddit_remove_sub_feed`: Removes the feed from subreddits
+- `facebook_remove_homepage_feed`: Removes the feed from the Facebook homepage
 - `stackexchange_remove_landing_feed`: Removes the "Top Question" feed from Stack Exchange site landing pages
 - `stackexchange_remove_all_questions_feed`: Removes the "All Questions" feed under /questsions
 - `stackexchange_remove_hot`: Removes the "Hot Network Questions" sidebar
