@@ -24,6 +24,8 @@ The list is as follows:
 - `twitter_remove_home_feed`: Remove the Home feed
 - `twitter_remove_trending`: Remove the "What's happening" block
 - `twitter_remove_follow_suggestions`: Remove the "Who to follow" block
+- `stackexchange_remove_landing_feed`: Removes the "Top Question" feed from Stack Exchange site landing pages
+- `stackexchange_remove_all_questions_feed`: Removes the "All Questions" feed under /questsions
 - `stackexchange_remove_hot`: Removes the "Hot Network Questions" sidebar
 - `stackexchange_remove_related`: Removes the "Related" sidebar
 - `stackexchange_remove_rss_link`: Removes the "Question feed" link
