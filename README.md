@@ -1,6 +1,6 @@
 # Gorged
 
-**What:** Gorged remove feeds, recommendation lists, and other browsing/exploration-related elements from websites like YouTube and Reddit
+**What:** Gorged remove feeds, recommendation lists, and other browsing/exploration-related elements from websites like Reddit and Twitter
 
 **Why:** Social media was incredibly detrimental to my life, so I blocked it on my computer. But then I couldn't access these sites *at all*, even for productive/positive tasks. The better solution is to leave these websites accessible, but remove their features related to browsing and exploring. (I got the idea from a coworker who uses [improvedtube](https://chrome.google.com/webstore/detail/improve-youtube-open-sour/bnomihfieiccainjcjblhegjgglakjdd?hl=en))
 
@@ -39,7 +39,7 @@ The list is as follows:
 
 ## Installation
 
-Gorged runs on [Python](https://www.python.org/), so make sure you have that first. Then clone this repo and install dependencies. Here, I do that with a Python [virtual environment](https://docs.python.org/3/library/venv.html):
+Gorged runs on [Python](https://www.python.org/) 3.8+ so make sure you have that first. Then clone this repo and install dependencies. Here, I do that with a Python [virtual environment](https://docs.python.org/3/library/venv.html):
 
 ```bash
 git clone https://github.com/quelklef/gorged
