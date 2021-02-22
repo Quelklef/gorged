@@ -103,7 +103,8 @@ stackexchange_re = re.compile("|".join(map(re.escape, stackexchange_domains)))
 @intercept(stackexchange_re)
 def stackexchange_remove_landing_feed(soup, flow, url_obj):
     """Removes the "Top Question" feed from Stack Exchange site landing pages"""
-    remove("#mainbar", from_=soup, via="node-removal")
+    if is_landing(url_obj):
+        remove("#mainbar", from_=soup, via="node-removal")
 
 
 @intercept(stackexchange_re)
