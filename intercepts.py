@@ -116,9 +116,11 @@ def make_intercepts(flagset):
                 """Removes the left navigation bar"""
                 remove("#left-sidebar", from_=soup, via="opacity-0")
 
-            is_parent_se_site = url_obj.netloc == "stackexchange.com"
-            if is_landing(url_obj) and not is_parent_se_site:
-                remove("#mainbar", from_=soup, via="node-removal")
+            if flagset.stackexchange_remove_se_landing_feed:
+                """Removes the feed on the landing page of stackexchange.com"""
+                is_parent_se_site = url_obj.netloc == "stackexchange.com"
+                if is_landing(url_obj) and not is_parent_se_site:
+                    remove("#mainbar", from_=soup, via="node-removal")
 
     if flagset.reddit:
         """Allow modification of Reddit"""
