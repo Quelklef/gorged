@@ -1,24 +1,17 @@
-import contextlib
 import os
 import re
-import sys
-import traceback
 from urllib.parse import urlparse
 
 import bs4
 
 from intercepts import intercepts
+from util import infallibly
 
 is_disabled_re = re.compile(os.getenv("GORGE_DISABLED_RE", "") or "never^")
-is_disabled = lambda intercept: bool(is_disabled_re.search(intercept.slug))
 
 
-@contextlib.contextmanager
-def infallibly():
-    try:
-        yield
-    except:
-        print(traceback.format_exc(), file=sys.stderr)
+def is_disabled(intercept):
+    return bool(is_disabled_re.search(intercept.slug))
 
 
 def response(flow):

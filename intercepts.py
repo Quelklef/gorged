@@ -5,8 +5,8 @@ Intercept = namedtuple("Intercept", "slug desc regex func")
 
 
 def remove(selector, *, from_, via):
-    soup = from_
-    strategy = via
+    soup, strategy = from_, via
+    del from_, via
 
     if strategy == "display-none":
         style = soup.new_tag("style")
@@ -22,7 +22,7 @@ def remove(selector, *, from_, via):
         soup.select_one(selector).decompose()
 
     else:
-        raise ValueError(f"Unrecognized removal strategy {repr(via)}")
+        raise ValueError(f"Unrecognized removal strategy {repr(strategy)}")
 
 
 def is_landing(url_obj):
@@ -151,12 +151,10 @@ def reddit_remove_landing_feed(soup, flow, url_obj):
 @intercept(new_reddit_re)
 def reddit_remove_sub_feed(soup, flow, url_obj):
     """Removes the feed from subreddits"""
-    if not is_landing(url_obj):
-        # Remove body from /r/{sub}
-        # Reddit seems to build the page content with JS, so we have to do this with CSS
-        if bool(re.match(r"/r/[^/?]+/?", url_obj.path)):
-            remove(
-                ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
-                from_=soup,
-                via="display-none",
-            )
+    is_sub_landing = bool(re.match(r"/r/[^/?]+/?", url_obj.path))
+    if is_sub_landing:
+        remove(
+            ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
+            from_=soup,
+            via="display-none",
+        )
