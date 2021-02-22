@@ -4,6 +4,18 @@ from collections import namedtuple
 Intercept = namedtuple("Intercept", "slug desc regex func")
 
 
+def insistent_append(soup, node):
+    html = soup.find("html")
+    if not html:
+        soup.append(node)
+
+    body = html.find("body")
+    if not body:
+        html.append(node)
+
+    body.append(node)
+
+
 def remove(selector, *, from_, via):
     soup, strategy = from_, via
     del from_, via
@@ -15,18 +27,72 @@ def remove(selector, *, from_, via):
             "opacity-0": selector + "{ opacity: 0 !important; }",
         }[strategy]
 
-        soup.append(style)
-
-        html = soup.find("html")
-        if html:
-            html.append(style)
-
-        body = soup.find("body")
-        if body:
-            body.append(style)
+        insistent_append(soup, style)
 
     elif strategy == "node-removal":
         soup.select_one(selector).decompose()
+
+    elif strategy == "javascript":
+        script = soup.new_tag("script")
+        script.string = r"""
+        (function () {
+
+            function infallibly(func) {
+                return function(...args) {
+                    try {
+                        func(...args);
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+            }
+
+            function* walk(root) {
+                const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+                let node = walker.currentNode;
+                while (node) {
+                    yield node;
+                    node = walker.nextNode();
+                }
+            }
+
+            const callback = ( %(callback)s );
+
+            function firstly() {
+                for (const node of walk(document)) {
+                    infallibly(callback)(node);
+                }
+            }
+
+            if (document.readyState === 'complete' || document.readyState === 'loaded') {
+                firstly();
+            } else {
+                document.addEventListener('DOMContentLoaded', () => firstly());
+            }
+
+            const mo = new MutationObserver(mutations => {
+                for (const mut of mutations) {
+                    const ofInterest = [mut.target, ...mut.addedNodes];
+                    for (const root of ofInterest) {
+                        for (const node of walk(root)) {
+                            infallibly(callback)(node);
+                        }
+                    }
+                }
+            });
+
+            mo.observe(document, {
+                subtree: true,
+                childList: true,
+                attributes: true,
+                characterData: true,
+            });
+
+        })();
+        """ % {
+            "callback": selector
+        }
+        insistent_append(soup, script)
 
     else:
         raise ValueError(f"Unrecognized removal strategy {repr(strategy)}")
@@ -106,6 +172,16 @@ def reddit_remove_sub_feed(soup, flow, url_obj):
             from_=soup,
             via="display-none",
         )
+
+
+@intercept(new_reddit_re)
+def reddit_remove_after_post_feed(soup, flow, url_obj):
+    """Removes the "More posts from the <subreddit> community" below posts"""
+    remove(
+        r"node => node.innerText && node.innerText.match(/^More posts from the .* community$/i) && node.parentNode.remove()",
+        from_=soup,
+        via="javascript",
+    )
 
 
 facebook_re = re.compile(r"facebook\.com")
