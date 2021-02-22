@@ -20,7 +20,10 @@ def remove(selector, *, from_, via):
     soup, strategy = from_, via
     del from_, via
 
-    if strategy in ("display-none", "opacity-0"):
+    if strategy == "node-removal":
+        soup.select_one(selector).decompose()
+
+    elif strategy in ("display-none", "opacity-0"):
         style = soup.new_tag("style")
         style.string = {
             "display-none": selector + "{ display: none !important; }",
@@ -28,9 +31,6 @@ def remove(selector, *, from_, via):
         }[strategy]
 
         insistent_append(soup, style)
-
-    elif strategy == "node-removal":
-        soup.select_one(selector).decompose()
 
     elif strategy == "javascript":
         script = soup.new_tag("script")
