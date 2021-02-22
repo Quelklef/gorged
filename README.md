@@ -12,7 +12,26 @@ _Why not a browser extension?_ Browser extensions are easy to get around: use in
 
 _Or skip right to [installation](#installation)_
 
-TODO
+These are all the changes that the program is capable of making. To disable some, run like
+```bash
+./run.sh --disable reddit,stackexchange_remove_rss_link
+```
+
+The list is as follows:
+
+[comment]: # (BEGIN FLAG DOCS)
+
+- `reddit`: Allow modification of Reddit
+- `reddit_remove_landing_feed`: Removes the feed from the homepage of Reddit
+- `reddit_remove_sub_feed`: Removes the feed from subreddits
+- `stackexchange`: Allow modification of Stack Exchange websites
+- `stackexchange_remove_hot`: Removes the "Hot Network Questions" sidebar
+- `stackexchange_remove_left_sidebar`: Removes the left navigation bar
+- `stackexchange_remove_related`: Removes the "Related" sidebar
+- `stackexchange_remove_rss_link`: Removes the "Question feed" link
+- `stackexchange_remove_stick_note`: Removes the yellow "sticky note" on the right side of the page
+
+[comment]: # (END FLAG DOCS)
 
 ## Installation
 

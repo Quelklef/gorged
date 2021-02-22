@@ -5,7 +5,10 @@ from urllib.parse import urlparse
 
 import bs4
 
-from intercepts import intercepts
+import flags
+from intercepts import make_intercepts
+
+intercepts = make_intercepts(flags.make_flagset())
 
 
 @contextlib.contextmanager
