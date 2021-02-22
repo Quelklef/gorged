@@ -3,7 +3,7 @@ import flags
 
 def row_of(string, substring):
     if substring not in string:
-        raise ValueError(f"Substring must be in string")
+        raise ValueError("Substring must be in string")
     return string[: string.index(substring)].count("\n")
 
 

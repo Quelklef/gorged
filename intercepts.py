@@ -1,9 +1,5 @@
 import re
 
-import bs4
-
-import flags
-
 
 class Intercept:
     def __init__(self, regex, func):
