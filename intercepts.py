@@ -8,15 +8,22 @@ def remove(selector, *, from_, via):
     soup, strategy = from_, via
     del from_, via
 
-    if strategy == "display-none":
+    if strategy in ("display-none", "opacity-0"):
         style = soup.new_tag("style")
-        style.string = selector + "{ display: none !important; }"
-        soup.find("html").append(style)
+        style.string = {
+            "display-none": selector + "{ display: none !important; }",
+            "opacity-0": selector + "{ opacity: 0 !important; }",
+        }[strategy]
 
-    if strategy == "opacity-0":
-        style = soup.new_tag("style")
-        style.string = selector + "{ opacity: 0 !important; }"
-        soup.find("html").append(style)
+        soup.append(style)
+
+        html = soup.find("html")
+        if html:
+            html.append(style)
+
+        body = soup.find("body")
+        if body:
+            body.append(style)
 
     elif strategy == "node-removal":
         soup.select_one(selector).decompose()
