@@ -12,7 +12,7 @@ _Why not a browser extension?_ Browser extensions are easy to get around: use in
 
 _Or skip right to [installation](#installation)_
 
-These are all the changes that the program is capable of making. To disable some, pass regexes to `--disable`, like
+These are all the changes that the program is capable of making. To disable some, pass a regex to `--disable`, like
 ```bash
 ./run.sh --disable 'twitter_remove_home_feed|stackexchange.*'
 ```
