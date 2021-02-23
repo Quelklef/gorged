@@ -4,19 +4,19 @@ from collections import namedtuple
 Intercept = namedtuple("Intercept", "slug desc regex func")
 
 
-def insistent_append(soup, node):
+def insistent_prepend(soup, node):
 
     html = soup.find("html")
     if not html:
-        soup.append(node)
+        soup.insert(0, node)
         return
 
     body = html.find("body")
     if not body:
-        html.append(node)
+        html.insert(0, node)
         return
 
-    body.append(node)
+    body.insert(0, node)
 
 
 def remove(selector, *, from_, via):
@@ -37,7 +37,7 @@ def remove(selector, *, from_, via):
 
         style = soup.new_tag("style")
         style.string = selector + " { " + css + " }"
-        insistent_append(soup, style)
+        insistent_prepend(soup, style)
 
     elif strategy == "javascript":
         script = soup.new_tag("script")
@@ -99,7 +99,7 @@ def remove(selector, *, from_, via):
         """ % {
             "callback": selector
         }
-        insistent_append(soup, script)
+        insistent_prepend(soup, script)
 
     else:
         raise ValueError(f"Unrecognized removal strategy {repr(strategy)}")
