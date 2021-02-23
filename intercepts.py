@@ -27,12 +27,16 @@ def remove(selector, *, from_, via):
         soup.select_one(selector).decompose()
 
     elif strategy in ("display-none", "opacity-0"):
-        style = soup.new_tag("style")
-        style.string = selector + {
-            "display-none": "{ display: none !important; }",
-            "opacity-0": "{ opacity: 0 !important; pointer-events: none !important; }",
+        css = {
+            "display-none": "display: none !important;",
+            "opacity-0": "opacity: 0 !important; pointer-events: none !important;",
         }[strategy]
 
+        for node in soup.select(selector):
+            node["style"] = node.attrs.get("style", "") + "; " + css
+
+        style = soup.new_tag("style")
+        style.string = selector + " { " + css + " }"
         insistent_append(soup, style)
 
     elif strategy == "javascript":
