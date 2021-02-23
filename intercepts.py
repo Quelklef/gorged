@@ -28,9 +28,9 @@ def remove(selector, *, from_, via):
 
     elif strategy in ("display-none", "opacity-0"):
         style = soup.new_tag("style")
-        style.string = {
-            "display-none": selector + "{ display: none !important; }",
-            "opacity-0": selector + "{ opacity: 0 !important; }",
+        style.string = selector + {
+            "display-none": "{ display: none !important; }",
+            "opacity-0": "{ opacity: 0 !important; pointer-events: none !important; }",
         }[strategy]
 
         insistent_append(soup, style)
