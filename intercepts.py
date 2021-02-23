@@ -1,7 +1,7 @@
 import re
 from collections import namedtuple
 
-Intercept = namedtuple("Intercept", "slug desc regex func")
+Intercept = namedtuple("Intercept", "slug desc regex func enabled_by_default")
 
 
 def insistent_prepend(soup, node):
@@ -112,7 +112,7 @@ def is_landing(url_obj):
 intercepts = []
 
 
-def intercept(regex):
+def intercept(regex, *, enabled_by_default):
     def decorator(func):
         intercepts.append(
             Intercept(
@@ -120,6 +120,7 @@ def intercept(regex):
                 desc=func.__doc__,
                 regex=regex,
                 func=func,
+                enabled_by_default=enabled_by_default,
             )
         )
 
@@ -129,7 +130,7 @@ def intercept(regex):
 twitter_re = re.compile(r"twitter\.com")
 
 
-@intercept(twitter_re)
+@intercept(twitter_re, enabled_by_default=True)
 def twitter_remove_home_feed(soup, flow, url_obj):
     """Remove the Home feed"""
     remove(
@@ -139,7 +140,7 @@ def twitter_remove_home_feed(soup, flow, url_obj):
     )
 
 
-@intercept(twitter_re)
+@intercept(twitter_re, enabled_by_default=True)
 def twitter_remove_trending(soup, flow, url_obj):
     """Remove the "What's happening" block"""
     remove(
@@ -149,7 +150,7 @@ def twitter_remove_trending(soup, flow, url_obj):
     )
 
 
-@intercept(twitter_re)
+@intercept(twitter_re, enabled_by_default=True)
 def twitter_remove_follow_suggestions(soup, flow, url_obj):
     """Remove the "Who to follow" block"""
     remove(
@@ -162,14 +163,14 @@ def twitter_remove_follow_suggestions(soup, flow, url_obj):
 new_reddit_re = re.compile(r"(?<!old\.)reddit\.com")
 
 
-@intercept(new_reddit_re)
+@intercept(new_reddit_re, enabled_by_default=True)
 def reddit_remove_landing_feed(soup, flow, url_obj):
     """Removes the feed from the homepage of Reddit"""
     if is_landing(url_obj):
         remove("html", from_=soup, via="node-removal")
 
 
-@intercept(new_reddit_re)
+@intercept(new_reddit_re, enabled_by_default=True)
 def reddit_remove_sub_feed(soup, flow, url_obj):
     """Removes the feed from subreddits"""
     is_sub_landing = bool(re.match(r"/r/[^/?]+/?", url_obj.path))
@@ -181,7 +182,7 @@ def reddit_remove_sub_feed(soup, flow, url_obj):
         )
 
 
-@intercept(new_reddit_re)
+@intercept(new_reddit_re, enabled_by_default=True)
 def reddit_remove_after_post_feed(soup, flow, url_obj):
     """Removes the "More posts from the <subreddit> community" below posts"""
     remove(
@@ -194,14 +195,14 @@ def reddit_remove_after_post_feed(soup, flow, url_obj):
 facebook_re = re.compile(r"facebook\.com")
 
 
-@intercept(facebook_re)
+@intercept(facebook_re, enabled_by_default=True)
 def facebook_remove_homepage_feed(soup, flow, url_obj):
     """Removes the feed from the Facebook homepage"""
     if is_landing(url_obj):
         remove("div[role=feed]", from_=soup, via="display-none")
 
 
-@intercept(facebook_re)
+@intercept(facebook_re, enabled_by_default=True)
 def facebook_remove_profile_timeline(soup, flow, url_obj):
     """Removes the timeline from user profiles"""
     if re.match("/[^/]+/?", url_obj.path):
@@ -229,51 +230,51 @@ stackexchange_domains = [
 stackexchange_re = re.compile("|".join(map(re.escape, stackexchange_domains)))
 
 
-@intercept(stackexchange_re)
+@intercept(stackexchange_re, enabled_by_default=True)
 def stackexchange_remove_landing_feed(soup, flow, url_obj):
     """Removes the "Top Question" feed from Stack Exchange site landing pages"""
     if is_landing(url_obj):
         remove("#mainbar", from_=soup, via="node-removal")
 
 
-@intercept(stackexchange_re)
+@intercept(stackexchange_re, enabled_by_default=True)
 def stackexchange_remove_all_questions_feed(soup, flow, url_obj):
     """Removes the "All Questions" feed under /questsions"""
     if url_obj.path == "/questions":
         remove("#mainbar", from_=soup, via="node-removal")
 
 
-@intercept(stackexchange_re)
+@intercept(stackexchange_re, enabled_by_default=True)
 def stackexchange_remove_hot(soup, flow, url_obj):
     """Removes the "Hot Network Questions" sidebar"""
     remove("#hot-network-questions", from_=soup, via="node-removal")
 
 
-@intercept(stackexchange_re)
+@intercept(stackexchange_re, enabled_by_default=True)
 def stackexchange_remove_related(soup, flow, url_obj):
     """Removes the "Related" sidebar"""
     remove(".sidebar-related", from_=soup, via="node-removal")
 
 
-@intercept(stackexchange_re)
+@intercept(stackexchange_re, enabled_by_default=False)
 def stackexchange_remove_rss_link(soup, flow, url_obj):
     """Removes the "Question feed" link"""
     remove("#feed-link", from_=soup, via="node-removal")
 
 
-@intercept(stackexchange_re)
+@intercept(stackexchange_re, enabled_by_default=True)
 def stackexchange_remove_sticky_note(soup, flow, url_obj):
     """Removes the yellow "sticky note" on the right side of the page"""
     remove("#sidebar .s-sidebarwidget", from_=soup, via="node-removal")
 
 
-@intercept(stackexchange_re)
+@intercept(stackexchange_re, enabled_by_default=False)
 def stackexchange_remove_left_sidebar(soup, flow, url_obj):
     """Removes the left navigation bar"""
     remove("#left-sidebar", from_=soup, via="opacity-0")
 
 
-@intercept(stackexchange_re)
+@intercept(stackexchange_re, enabled_by_default=True)
 def stackexchange_remove_se_landing_feed(soup, flow, url_obj):
     """Removes the feed on the landing page of stackexchange.com"""
     is_parent_se_site = url_obj.netloc == "stackexchange.com"

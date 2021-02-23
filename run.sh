@@ -2,11 +2,17 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-disabled_re=""
+nl=$'\n'
+
+regexes=""
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
     --disable)
-      disabled_re="$2"
+      regexes="${regexes}${nl}disable:${2}"
+      shift; shift
+      ;;
+    --enable)
+      regexes="${regexes}${nl}enable:${2}"
       shift; shift
       ;;
     *)
@@ -16,7 +22,7 @@ while [[ "$#" -gt 0 ]]; do
   esac
 done
 
-export GORGE_DISABLED_RE="$disabled_re"
+export GORGE_REGEXES="$regexes"
 
 # mitmdump catches all python exceptions, so
 # run the script now to see if there are any

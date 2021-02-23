@@ -12,31 +12,37 @@ _Why not a browser extension?_ Browser extensions are easy to get around: use in
 
 _Or skip right to [installation](#installation)_
 
-These are all the changes that the program is capable of making. To disable some, pass a regex to `--disable`, like
+Gorged has a number of effects on websites. All effects are given a name and can be turned on or off by passing regexes to `--enable` and/or `--disable`, like so:
+
 ```bash
-./run.sh --disable 'twitter_remove_home_feed|stackexchange.*'
+./run.sh \
+  --disable '^stackechange.*' \
+  --enable  '^(twitter|facebook).*' \
+  --disable '^twitter_remove_sub_feed$'  # later rules take precedence over earlier rules
 ```
 
-The list is as follows:
+Here are all the effects:
 
 [comment]: # (BEGIN FLAG DOCS)
 
-- `twitter_remove_home_feed`: Remove the Home feed
-- `twitter_remove_trending`: Remove the "What's happening" block
-- `twitter_remove_follow_suggestions`: Remove the "Who to follow" block
-- `reddit_remove_landing_feed`: Removes the feed from the homepage of Reddit
-- `reddit_remove_sub_feed`: Removes the feed from subreddits
-- `reddit_remove_after_post_feed`: Removes the "More posts from the <subreddit> community" below posts
-- `facebook_remove_homepage_feed`: Removes the feed from the Facebook homepage
-- `facebook_remove_profile_timeline`: Removes the timeline from user profiles
-- `stackexchange_remove_landing_feed`: Removes the "Top Question" feed from Stack Exchange site landing pages
-- `stackexchange_remove_all_questions_feed`: Removes the "All Questions" feed under /questsions
-- `stackexchange_remove_hot`: Removes the "Hot Network Questions" sidebar
-- `stackexchange_remove_related`: Removes the "Related" sidebar
-- `stackexchange_remove_rss_link`: Removes the "Question feed" link
-- `stackexchange_remove_sticky_note`: Removes the yellow "sticky note" on the right side of the page
-- `stackexchange_remove_left_sidebar`: Removes the left navigation bar
-- `stackexchange_remove_se_landing_feed`: Removes the feed on the landing page of stackexchange.com
+|Name|Enabled by default?|Description|
+|-|-|-|
+|`twitter_remove_home_feed`|✅|Remove the Home feed|
+|`twitter_remove_trending`|✅|Remove the "What's happening" block|
+|`twitter_remove_follow_suggestions`|✅|Remove the "Who to follow" block|
+|`reddit_remove_landing_feed`|✅|Removes the feed from the homepage of Reddit|
+|`reddit_remove_sub_feed`|✅|Removes the feed from subreddits|
+|`reddit_remove_after_post_feed`|✅|Removes the "More posts from the <subreddit> community" below posts|
+|`facebook_remove_homepage_feed`|✅|Removes the feed from the Facebook homepage|
+|`facebook_remove_profile_timeline`|✅|Removes the timeline from user profiles|
+|`stackexchange_remove_landing_feed`|✅|Removes the "Top Question" feed from Stack Exchange site landing pages|
+|`stackexchange_remove_all_questions_feed`|✅|Removes the "All Questions" feed under /questsions|
+|`stackexchange_remove_hot`|✅|Removes the "Hot Network Questions" sidebar|
+|`stackexchange_remove_related`|✅|Removes the "Related" sidebar|
+|`stackexchange_remove_rss_link`|⛔|Removes the "Question feed" link|
+|`stackexchange_remove_sticky_note`|✅|Removes the yellow "sticky note" on the right side of the page|
+|`stackexchange_remove_left_sidebar`|⛔|Removes the left navigation bar|
+|`stackexchange_remove_se_landing_feed`|✅|Removes the feed on the landing page of stackexchange.com|
 
 [comment]: # (END FLAG DOCS)
 
