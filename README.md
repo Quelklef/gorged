@@ -39,6 +39,7 @@ Here are all the effects:
 |`stackexchange:all_questions_feed`|✅|Removes the "All Questions" feed under /questsions|
 |`stackexchange:hot`|✅|Removes the "Hot Network Questions" sidebar|
 |`stackexchange:related`|✅|Removes the "Related" sidebar|
+|`stackexchange:linked`|⛔|Removes the "Linked" sidebar|
 |`stackexchange:rss_link`|⛔|Removes the "Question feed" link|
 |`stackexchange:sticky_note`|✅|Removes the yellow "sticky note" on the right side of the page|
 |`stackexchange:left_sidebar`|⛔|Removes the left navigation bar|

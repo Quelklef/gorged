@@ -305,6 +305,16 @@ def modify(soup, flow, url_obj):
 
 
 @intercept(
+    slug="stackexchange:linked",
+    regex=stackexchange_re,
+    enabled_by_default=False,
+)
+def modify(soup, flow, url_obj):
+    """Removes the "Linked" sidebar"""
+    remove(".sidebar-linked", from_=soup, via="node-removal")
+
+
+@intercept(
     slug="stackexchange:rss_link",
     regex=stackexchange_re,
     enabled_by_default=False,
