@@ -216,6 +216,66 @@ def modify(soup, flow, url_obj):
     )
 
 
+imgur_re = re.compile(r"imgur\.com")
+
+
+@intercept(
+    slug="imgur:homepage_feed",
+    regex=imgur_re,
+    enabled_by_default=True,
+)
+def modify(soup, flow, url_obj):
+    """Removes the feed from the imgur homepage"""
+    if is_landing(url_obj):
+        remove(
+            ".Spinner-contentWrapper",
+            from_=soup,
+            via="display-none",
+        )
+
+
+@intercept(
+    slug="imgur:right_sidebar",
+    regex=imgur_re,
+    enabled_by_default=True,
+)
+def modify(soup, flow, url_obj):
+    """Removes the right-hand sidebar from Imgur posts"""
+    remove(
+        ".Gallery-Sidebar",
+        from_=soup,
+        via="opacity-0",
+    )
+
+
+@intercept(
+    slug="imgur:left_sidebar",
+    regex=imgur_re,
+    enabled_by_default=False,
+)
+def modify(soup, flow, url_obj):
+    """Removes the left-hand sidebar from Imgur posts"""
+    remove(
+        ".Gallery-EngagementBar",
+        from_=soup,
+        via="opacity-0",
+    )
+
+
+@intercept(
+    slug="imgur:after_post_explore_feed",
+    regex=imgur_re,
+    enabled_by_default=True,
+)
+def modify(soup, flow, url_obj):
+    """Removes the 'Explore Posts' feed after Imgur posts"""
+    remove(
+        ".BottomRecirc",
+        from_=soup,
+        via="display-none",
+    )
+
+
 facebook_re = re.compile(r"facebook\.com")
 
 

@@ -33,6 +33,10 @@ Here are all the effects:
 |`reddit:landing_feed`|✅|Removes the feed from the homepage of Reddit|
 |`reddit:sub_feed`|✅|Removes the feed from subreddits|
 |`reddit:after_post_feed`|✅|Removes the "More posts from the <subreddit> community" below posts|
+|`imgur:homepage_feed`|✅|Removes the feed from the imgur homepage|
+|`imgur:right_sidebar`|✅|Removes the right-hand sidebar from Imgur posts|
+|`imgur:left_sidebar`|⛔|Removes the left-hand sidebar from Imgur posts|
+|`imgur:after_post_explore_feed`|✅|Removes the 'Explore Posts' feed after Imgur posts|
 |`facebook:homepage_feed`|✅|Removes the feed from the Facebook homepage|
 |`facebook:profile_timeline`|✅|Removes the timeline from user profiles|
 |`stackexchange:landing_feed`|✅|Removes the "Top Question" feed from Stack Exchange site landing pages|
