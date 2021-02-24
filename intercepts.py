@@ -235,6 +235,20 @@ def modify(soup, flow, url_obj):
 
 
 @intercept(
+    slug="imgur:search",
+    regex=imgur_re,
+    enabled_by_default=True,
+)
+def modify(soup, flow, url_obj):
+    """Removes the search bar from imgur"""
+    remove(
+        ".Searchbar",
+        from_=soup,
+        via="display-none",
+    )
+
+
+@intercept(
     slug="imgur:right_sidebar",
     regex=imgur_re,
     enabled_by_default=True,

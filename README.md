@@ -34,6 +34,7 @@ Here are all the effects:
 |`reddit:sub_feed`|✅|Removes the feed from subreddits|
 |`reddit:after_post_feed`|✅|Removes the "More posts from the <subreddit> community" below posts|
 |`imgur:homepage_feed`|✅|Removes the feed from the imgur homepage|
+|`imgur:search`|✅|Removes the search bar from imgur|
 |`imgur:right_sidebar`|✅|Removes the right-hand sidebar from Imgur posts|
 |`imgur:left_sidebar`|⛔|Removes the left-hand sidebar from Imgur posts|
 |`imgur:after_post_explore_feed`|✅|Removes the 'Explore Posts' feed after Imgur posts|
