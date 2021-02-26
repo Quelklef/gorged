@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 // == ALL INTERCEPT IMPLS MUST BE TO-STRING-ABLE == //
 
 // https://stackoverflow.com/a/3561711/4608364
-const escapeRegex = s => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+const escapeRegex = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 
 // -- //
 
@@ -13,14 +13,14 @@ class Intercept {
   constructor({ regex, desc, tags, inject, impl }) {
     this.regex = regex;
     this.desc = desc;
-    this.tags = tags.split(' ').filter(t => !!t);
+    this.tags = tags.split(" ").filter((t) => !!t);
     this.inject = inject;
     this.impl = impl;
 
-    const ids = this.tags.filter(tag => tag.startsWith('id='));
+    const ids = this.tags.filter((tag) => tag.startsWith("id="));
     if (ids.length !== 1)
       throw Error("Requires exactly one id (tag starting with 'id=')");
-    this.id = ids[0].slice('id='.length);
+    this.id = ids[0].slice("id=".length);
   }
 }
 
@@ -34,7 +34,9 @@ intercept({
   desc: `Removes the timeline from the homepage of Twitter.`,
   inject: true,
   impl(lib, doc, url) {
-    lib.watch(doc, '[aria-label="Timeline: Your Home Timeline"]', lib.remove, { one: true });
+    lib.watch(doc, '[aria-label="Timeline: Your Home Timeline"]', lib.remove, {
+      one: true,
+    });
   },
 });
 
@@ -44,7 +46,9 @@ intercept({
   desc: `Removes the "What's happening" block from Twitter`,
   inject: true,
   impl(lib, doc, url) {
-    lib.watch(doc, '[aria-label="Timeline: Trending now"]', lib.remove, { one: true });
+    lib.watch(doc, '[aria-label="Timeline: Trending now"]', lib.remove, {
+      one: true,
+    });
   },
 });
 
@@ -64,9 +68,9 @@ intercept({
   desc: `Removes the homepage feed`,
   inject: false,
   impl(lib, doc, url) {
-    if (url.pathname === '/') {
-      doc.head.innerHTML = '';
-      doc.body.innerHTML = '';
+    if (url.pathname === "/") {
+      doc.head.innerHTML = "";
+      doc.body.innerHTML = "";
     }
   },
 });
@@ -77,9 +81,14 @@ intercept({
   desc: `Removes the feed from subreddits`,
   inject: true,
   impl(lib, doc, url) {
-    if (url.pathname.match(RegExp('/r/[^/?]+/?', 'g'))) {
+    if (url.pathname.match(RegExp("/r/[^/?]+/?", "g"))) {
       console.log(url.pathname);
-      lib.watch(doc, '.ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)', lib.remove, { one: true });
+      lib.watch(
+        doc,
+        ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
+        lib.remove,
+        { one: true }
+      );
     }
   },
 });
@@ -92,8 +101,10 @@ intercept({
   impl(lib, doc, url) {
     lib.watch(
       doc,
-      node => node.innerText && node.innerText.match(/^More posts from the .* community$/i),
-      node => node.parentNode.remove(),
+      (node) =>
+        node.innerText &&
+        node.innerText.match(/^More posts from the .* community$/i),
+      (node) => node.parentNode.remove()
     );
   },
 });
@@ -104,8 +115,8 @@ intercept({
   desc: `Removes the feed from the imgur homepage`,
   inject: true,
   impl(lib, doc, url) {
-    if (url.pathname === '/')
-      lib.watch(doc, '.Spinner-contentWrapper', lib.remove, { one: true });
+    if (url.pathname === "/")
+      lib.watch(doc, ".Spinner-contentWrapper", lib.remove, { one: true });
   },
 });
 
@@ -209,9 +220,12 @@ const seDoms = [
   "superuser.com",
   "tex-talk.net",
   "thesffblog.com",
-]
+];
 
-const seRe = RegExp(seDoms.map(s => '(' + escapeRegex(s) + ')').join('|'), 'g');
+const seRe = RegExp(
+  seDoms.map((s) => "(" + escapeRegex(s) + ")").join("|"),
+  "g"
+);
 
 intercept({
   regex: seRe,
@@ -219,10 +233,9 @@ intercept({
   desc: `Removes the "Hot Network Questions" sidebar`,
   inject: false,
   impl(lib, doc, url) {
-    doc.querySelector('#hot-network-questions').remove();
+    doc.querySelector("#hot-network-questions").remove();
   },
 });
-
 
 /* TODO:
 

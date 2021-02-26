@@ -1,31 +1,30 @@
-'use strict';
+"use strict";
 
-const net = require('net');
-const fs = require('fs');
+const net = require("net");
+const fs = require("fs");
 
-const onExit = require('node-cleanup');
+const onExit = require("node-cleanup");
 
 module.exports = { serveFifo };
 
 function serveFifo(path, respond) {
-
   const server = net.createServer();
 
-  server.on('connection', sock => {
-    console.log('New connection opened.')
+  server.on("connection", (sock) => {
+    console.log("New connection opened.");
 
     let initial, size, message;
-    const reset = () => [initial, size, message] = ['', null, ''];
+    const reset = () => ([initial, size, message] = ["", null, ""]);
     reset();
 
-    sock.on('data', data => {
+    sock.on("data", (data) => {
       const string = data.toString();
 
       if (size === null) {
         initial += string;
-        if (initial.includes(':')) {
-          size = parseInt(initial.slice(0, initial.indexOf(':')), 10);
-          message = initial.slice(initial.indexOf(':') + 1);
+        if (initial.includes(":")) {
+          size = parseInt(initial.slice(0, initial.indexOf(":")), 10);
+          message = initial.slice(initial.indexOf(":") + 1);
         }
       } else {
         message += string;
@@ -33,18 +32,18 @@ function serveFifo(path, respond) {
 
       if (message.length >= size) {
         const response = respond(message);
-        sock.write(response.length + ':' + response);
+        sock.write(response.length + ":" + response);
         reset();
       }
     });
 
-    sock.on('end', () => {
-      console.log('A connection closed.');
+    sock.on("end", () => {
+      console.log("A connection closed.");
     });
   });
 
-  server.on('close', () => {
-    console.log('Server closed.')
+  server.on("close", () => {
+    console.log("Server closed.");
   });
 
   onExit(() => {
@@ -54,7 +53,6 @@ function serveFifo(path, respond) {
   });
 
   server.listen(path, () => {
-    console.log('Server opened.');
+    console.log("Server opened.");
   });
-
 }

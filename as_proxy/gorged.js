@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-const fs = require('fs');
+const fs = require("fs");
 
-const { JSDOM } = require('jsdom');
+const { JSDOM } = require("jsdom");
 
-const { serveFifo } = require('./fifo_server.js');
-const { intercepts } = require('../intercepts.js');
-const lib = require('../lib.js');
+const { serveFifo } = require("./fifo_server.js");
+const { intercepts } = require("../intercepts.js");
+const lib = require("../lib.js");
 
-const libCode = fs.readFileSync('../lib.js');
+const libCode = fs.readFileSync("../lib.js");
 
-serveFifo('./ipc.sock', message => {
+serveFifo("./ipc.sock", (message) => {
   const { html, url: urlStr } = JSON.parse(message);
 
   const dom = new JSDOM(html);
@@ -18,13 +18,15 @@ serveFifo('./ipc.sock', message => {
 
   const url = new URL(urlStr);
 
-  const matchingIntercepts = intercepts.filter(intercept => !!url.href.match(intercept.regex));
-  const hasInjectIntercept = intercepts.some(intercept => intercept.inject);
+  const matchingIntercepts = intercepts.filter(
+    (intercept) => !!url.href.match(intercept.regex)
+  );
+  const hasInjectIntercept = intercepts.some((intercept) => intercept.inject);
 
   const scripts = [];
 
   if (hasInjectIntercept) {
-    const script = doc.createElement('script');
+    const script = doc.createElement("script");
     script.innerHTML = `
       (function() {
         const module = {};
@@ -41,7 +43,7 @@ serveFifo('./ipc.sock', message => {
     if (!intercept.inject) {
       infallibly(intercept.impl)(lib, doc, url);
     } else {
-      const script = doc.createElement('script');
+      const script = doc.createElement("script");
       script.innerHTML = `
         (function() {
           // Intercept ${intercept.id}
@@ -65,13 +67,13 @@ serveFifo('./ipc.sock', message => {
 });
 
 function infallibly(func) {
-  return function(...args) {
+  return function (...args) {
     try {
       return func(...args);
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  }
+  };
 }
 
 function unevalFunction(func) {
@@ -85,20 +87,17 @@ function unevalFunction(func) {
     return `(function() { const f = ${string}; return f; })();`;
 
   // function(args) { body }
-  if (string.match(/^function\s*\(/))
-    return `(${string})`;
+  if (string.match(/^function\s*\(/)) return `(${string})`;
 
   // (args) => body
-  if (string.match(/^\(/))
-    return `(${string})`;
+  if (string.match(/^\(/)) return `(${string})`;
 
   // arg => body
-  if (string.match(/^[\w_\$]+\s*=>/))
-    return `(${string})`;
+  if (string.match(/^[\w_\$]+\s*=>/)) return `(${string})`;
 
   // { name(args) { body } }
   if (string.match(/^[\w_\$]+\s*\([\w_\$,\s]+\)\s*\{/))
     return `({ ${string} }["${func.name}"])`;
 
-  throw Error('Unaccounted-for case');
+  throw Error("Unaccounted-for case");
 }

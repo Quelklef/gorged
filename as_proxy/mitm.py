@@ -1,7 +1,4 @@
 import json
-import os
-import re
-from collections import namedtuple
 
 from fifo_client import FifoClient
 

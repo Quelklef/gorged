@@ -3,12 +3,14 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Format / lint / etc
-py_files=$( find | grep -E '\.py$' | grep -vE 'venv|node_modules' )
-IFS=$'\n' py_files=($py_files)
-black "$py_files" --fast  #| run twice with --fast in order to
-black "$py_files" --fast  #| deal with https://github.com/psf/black/issues/1629
-isort "$py_files"
-flake8 "$py_files" --max-line-length=140 --ignore=W503,E722,E731,E203,F811
+function src_files { find | grep -E "\\.$1\$" | grep -vE '/(venv|node_modules|__pycache__)/'; }
+py_files=$(src_files py) && IFS=$'\n' py_files=($py_files)
+js_files=$(src_files js) && IFS=$'\n' js_files=($js_files)
+black "${py_files[@]}" --fast  #| run twice with --fast in order to
+black "${py_files[@]}" --fast  #| deal with https://github.com/psf/black/issues/1629
+isort "${py_files[@]}"
+flake8 "${py_files[@]}" --max-line-length=140 --ignore=W503,E722,E731,E203,F811
+npx prettier "${js_files[@]}" --write
 
 # Regenerate readme
 echo "Updating README.md"
