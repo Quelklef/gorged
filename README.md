@@ -25,30 +25,16 @@ Here are all the effects:
 
 [comment]: # (BEGIN FLAG DOCS)
 
-|Name|Enabled by default?|Description|
-|-|-|-|
-|`twitter:home_feed`|✅|Remove the Home feed|
-|`twitter:trending`|✅|Remove the "What's happening" block|
-|`twitter:follow_suggestions`|✅|Remove the "Who to follow" block|
-|`reddit:landing_feed`|✅|Removes the feed from the homepage of Reddit|
-|`reddit:sub_feed`|✅|Removes the feed from subreddits|
-|`reddit:after_post_feed`|✅|Removes the "More posts from the <subreddit> community" below posts|
-|`imgur:homepage_feed`|✅|Removes the feed from the imgur homepage|
-|`imgur:search`|✅|Removes the search bar from imgur|
-|`imgur:right_sidebar`|✅|Removes the right-hand sidebar from Imgur posts|
-|`imgur:left_sidebar`|⛔|Removes the left-hand sidebar from Imgur posts|
-|`imgur:after_post_explore_feed`|✅|Removes the 'Explore Posts' feed after Imgur posts|
-|`facebook:homepage_feed`|✅|Removes the feed from the Facebook homepage|
-|`facebook:profile_timeline`|✅|Removes the timeline from user profiles|
-|`stackexchange:landing_feed`|✅|Removes the "Top Question" feed from Stack Exchange site landing pages|
-|`stackexchange:all_questions_feed`|✅|Removes the "All Questions" feed under /questsions|
-|`stackexchange:hot`|✅|Removes the "Hot Network Questions" sidebar|
-|`stackexchange:related`|✅|Removes the "Related" sidebar|
-|`stackexchange:linked`|⛔|Removes the "Linked" sidebar|
-|`stackexchange:rss_link`|⛔|Removes the "Question feed" link|
-|`stackexchange:sticky_note`|✅|Removes the yellow "sticky note" on the right side of the page|
-|`stackexchange:left_sidebar`|⛔|Removes the left navigation bar|
-|`stackexchange:se_landing_feed`|✅|Removes the feed on the landing page of stackexchange.com|
+|Id|Description|
+|-|-|
+|twitter-remove-homepage-feed|Removes the timeline from the homepage of Twitter.|
+|twitter-remove-trending|Removes the "What's happening" block from Twitter|
+|twitter-follow-suggestions|Removes the "Who to follow" block|
+|reddit-remove-homepage-feed|Removes the homepage feed|
+|reddit-remove-sub-feed|Removes the feed from subreddits|
+|reddit-remove-after-post-feed|Removes the feed that appears after posts|
+|imgur-homepage-feed|Removes the feed from the imgur homepage|
+|stackexchange-remove-hot-network-questions|Removes the "Hot Network Questions" sidebar|
 
 [comment]: # (END FLAG DOCS)
 
