@@ -2,8 +2,15 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# Format / lint / etc
 function src_files { find | grep -E "\\.$1\$" | grep -vE '/(venv|node_modules|__pycache__)/'; }
+
+# workflow
+[ "${1:-}" = "-w" ] && {
+  source ./venv/bin/activate
+  src_files 'py|js' | entr -c "$0"
+}
+
+# Format / lint / etc
 py_files=$(src_files py) && IFS=$'\n' py_files=($py_files)
 js_files=$(src_files js) && IFS=$'\n' js_files=($js_files)
 black "${py_files[@]}" --fast  #| run twice with --fast in order to
