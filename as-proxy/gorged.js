@@ -4,7 +4,7 @@ const fs = require("fs");
 
 const { JSDOM } = require("jsdom");
 
-const { serveFifo } = require("./fifo_server.js");
+const { serveFifo } = require("./fifo-server.js");
 const { intercepts } = require("../intercepts.js");
 const lib = require("../lib.js");
 

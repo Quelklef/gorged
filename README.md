@@ -61,7 +61,7 @@ Gorged runs on [Python](https://www.python.org/) 3.8+ so make sure you have that
 
 ```bash
 git clone https://github.com/quelklef/gorged
-cd gorged/as_proxy
+cd gorged/as-proxy
 python -m venv venv       # These two lines only required if you
 source venv/bin/activate  # want to use a virtual environment
 pip install -r requirements.txt
