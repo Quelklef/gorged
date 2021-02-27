@@ -26,9 +26,11 @@ function watch(doc, ...args) {
 
   Admits several call signatures:
 
-  > watch(doc, selectorString, callback)
-  > watch(doc, selectorString, callback, { one: true })
-  Filters nodes by the selector.
+  > watch(doc, { selector: cssSelectorString }, callback)
+  > watch(doc, { selector: cssSelectorString }, callback, { one: true })
+  > watch(doc, { xpath: xpathString }, callback)
+  > watch(doc, { xpath: xpathString }, callback, { one: true })
+  Filters nodes by the given css selector or xpath
   If one=true is given, stops after the first node matched.
 
   > watch(doc, predicate, callback)
@@ -69,28 +71,45 @@ function watch(doc, ...args) {
   }
 
   // Signature #1
-  else if (args.length > 1 && typeof args[0] === "string") {
-    const selector = args[0];
+  else if (args.length > 1 && (args[0].selector || args[0].xpath)) {
+    const selectorType = args[0].selector ? "css" : "xpath";
+    const selector = args[0].selector || args[0].xpath;
     const callback = args[1];
     const one = (args[2] || {}).one || false;
 
-    if (one) {
-      argument = function (node) {
-        const match = node.querySelector(selector);
-        if (match) {
-          _infallibly(callback)(match);
-          return one ? "stop" : "skip";
-        }
-      };
-    } else {
-      argument = function (node) {
-        const matches = node.querySelectorAll(selector);
-        if (matches.length > 0) {
-          matches.forEach(node => _infallibly(callback)(node));
-          return one ? "stop" : "skip";
-        }
-      };
-    }
+    const getMatches = (() => {
+      if (selectorType === "css" && one)
+        return node => {
+          const match = node.querySelector(selector);
+          return match ? [match] : [];
+        };
+
+      if (selectorType === "css" && !one)
+        return node => node.querySelectorAll(selector);
+
+      if (selectorType === "xpath")
+        return function* (node) {
+          const matcher = document.evaluate(
+            selector,
+            node,
+            null,
+            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+            null
+          );
+          let match;
+          for (let i = 0; (match = matcher.snapshotItem(i)); i++) yield match;
+        };
+
+      throw Error("Bad call");
+    })();
+
+    argument = function (node) {
+      for (const match of getMatches(node)) {
+        _infallibly(callback)(match);
+        if (one) return "stop";
+      }
+      return "skip";
+    };
   }
 
   // Uh oh
@@ -114,24 +133,20 @@ function watch(doc, ...args) {
     subtree: true,
     childList: true,
     attributes: true,
-    characterData: true,
   });
 
   function onMutation(mutations) {
     for (const mut of mutations) {
       switch (mut.type) {
         case "childList":
-          for (const node of [mut.target, ...mut.addedNodes]) {
-            const stop = _fancyWalk(node, callback);
-            if (stop) {
-              observer.disconnect();
-              return;
-            }
+          const stop = _fancyWalk(mut.target, callback);
+          if (stop) {
+            observer.disconnect();
+            return;
           }
           break;
 
         case "attributes":
-        case "characterData":
           const cmd = callback(mut.target);
           if (cmd === "stop") {
             observer.disconnect();

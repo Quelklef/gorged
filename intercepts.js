@@ -54,9 +54,15 @@ intercept({
   regex: /twitter\.com/g,
   inject: true,
   func(lib, doc, url) {
-    lib.watch(doc, '[aria-label="Timeline: Your Home Timeline"]', lib.remove, {
-      one: true,
-    });
+    lib.watch(
+      doc,
+      { selector: '[aria-label="Timeline: Your Home Timeline"]' },
+      node => {
+        console.log(node);
+        lib.remove(node);
+      },
+      { one: true }
+    );
   },
 });
 
@@ -67,9 +73,12 @@ intercept({
   regex: /twitter\.com/g,
   inject: true,
   func(lib, doc, url) {
-    lib.watch(doc, '[aria-label="Timeline: Trending now"]', lib.remove, {
-      one: true,
-    });
+    lib.watch(
+      doc,
+      { selector: '[aria-label="Timeline: Trending now"]' },
+      lib.remove,
+      { one: true }
+    );
   },
 });
 
@@ -80,7 +89,9 @@ intercept({
   regex: /twitter\.com/g,
   inject: true,
   func(lib, doc, url) {
-    lib.watch(doc, '[aria-label="Who to follow"]', lib.remove, { one: true });
+    lib.watch(doc, { selector: '[aria-label="Who to follow"]' }, lib.remove, {
+      one: true,
+    });
   },
 });
 
@@ -111,7 +122,10 @@ intercept({
     if (url.pathname.match(RegExp("/r/[^/?]+/?", "g"))) {
       lib.watch(
         doc,
-        ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
+        {
+          selector:
+            ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
+        },
         lib.remove,
         { one: true }
       );
@@ -147,7 +161,9 @@ intercept({
   inject: true,
   func(lib, doc, url) {
     if (url.pathname === "/")
-      lib.watch(doc, ".Spinner-contentWrapper", lib.remove, { one: true });
+      lib.watch(doc, { selector: ".Spinner-contentWrapper" }, lib.remove, {
+        one: true,
+      });
   },
 });
 
@@ -158,7 +174,7 @@ intercept({
   regex: /imgur\.com/g,
   inject: true,
   func(lib, doc, url) {
-    lib.watch(doc, ".Searchbar", lib.remove, { one: true });
+    lib.watch(doc, { selector: ".Searchbar" }, lib.remove, { one: true });
   },
 });
 
@@ -170,7 +186,7 @@ intercept({
     regex: RegExp(String.raw`imgur\.com/gallery/\w+/?`),
     inject: true,
     func(lib, doc, url) {
-      lib.watch(doc, ".Gallery-Sidebar", lib.hide);
+      lib.watch(doc, { selector: ".Gallery-Sidebar" }, lib.hide);
     },
   })
   .impl({
@@ -190,7 +206,7 @@ intercept({
   regex: /imgur\.com/,
   inject: true,
   func(lib, doc, url) {
-    lib.watch(doc, ".BottomRecirc", lib.remove);
+    lib.watch(doc, { selector: ".BottomRecirc" }, lib.remove);
   },
 });
 
@@ -204,7 +220,7 @@ intercept({
   regex: /facebook\.com/,
   inject: true,
   func(lib, doc, url) {
-    lib.watch(doc, "div[role=feed]", lib.remove);
+    lib.watch(doc, { selector: "div[role=feed]" }, lib.remove);
   },
 });
 
