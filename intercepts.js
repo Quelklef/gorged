@@ -2,7 +2,7 @@
 // == ALL INTERCEPT IMPLS MUST BE TO-STRING-ABLE == //
 
 // https://stackoverflow.com/a/3561711/4608364
-const escapeRegex = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+const escapeRegex = s => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 
 // -- //
 
@@ -25,11 +25,11 @@ class Intercept {
     if ([typeof tags, typeof desc].includes("undefined"))
       throw Error("Bad construction");
 
-    this.tags = tags.split(" ").filter((t) => !!t);
+    this.tags = tags.split(" ").filter(t => !!t);
     this.desc = desc;
     this.impls = [];
 
-    const ids = this.tags.filter((tag) => tag.startsWith("id="));
+    const ids = this.tags.filter(tag => tag.startsWith("id="));
     if (ids.length !== 1)
       throw Error("Requires exactly one id (tag starting with 'id=')");
     this.id = ids[0].slice("id=".length);
@@ -126,10 +126,10 @@ intercept({
   func(lib, doc, url) {
     lib.watch(
       doc,
-      (node) =>
+      node =>
         node.innerText &&
         node.innerText.match(/^More posts from the .* community$/i),
-      (node) => node.parentNode.remove()
+      node => node.parentNode.remove()
     );
   },
 });
@@ -252,10 +252,7 @@ const seDoms = [
   "thesffblog.com",
 ];
 
-const seRe = RegExp(
-  seDoms.map((s) => "(" + escapeRegex(s) + ")").join("|"),
-  "g"
-);
+const seRe = RegExp(seDoms.map(s => "(" + escapeRegex(s) + ")").join("|"), "g");
 
 intercept({
   tags: "id=stackexchange-remove-hot-network-questions pronged",

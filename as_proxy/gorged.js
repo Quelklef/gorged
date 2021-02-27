@@ -10,7 +10,7 @@ const lib = require("../lib.js");
 
 const libCode = fs.readFileSync("../lib.js");
 
-serveFifo("./ipc.sock", (message) => {
+serveFifo("./ipc.sock", message => {
   const { html, url: urlStr } = JSON.parse(message);
 
   const dom = new JSDOM(html);
@@ -18,9 +18,9 @@ serveFifo("./ipc.sock", (message) => {
 
   const url = new URL(urlStr);
 
-  const allImpls = intercepts.flatMap((intercept) => intercept.impls);
-  const matchingImpls = allImpls.filter((impl) => !!url.href.match(impl.regex));
-  const hasInject = matchingImpls.some((impl) => impl.inject);
+  const allImpls = intercepts.flatMap(intercept => intercept.impls);
+  const matchingImpls = allImpls.filter(impl => !!url.href.match(impl.regex));
+  const hasInject = matchingImpls.some(impl => impl.inject);
 
   const scripts = [];
 

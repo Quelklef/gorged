@@ -113,7 +113,7 @@ function watch(doc, ...args) {
     document.addEventListener("DOMContentLoaded", () => firstly());
   }
 
-  const observer = new MutationObserver((mutations) => {
+  const observer = new MutationObserver(mutations => {
     for (const mut of mutations) {
       const ofInterest = [mut.target, ...mut.addedNodes];
       for (const node of ofInterest) {

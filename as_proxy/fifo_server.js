@@ -10,14 +10,14 @@ module.exports = { serveFifo };
 function serveFifo(path, respond) {
   const server = net.createServer();
 
-  server.on("connection", (sock) => {
+  server.on("connection", sock => {
     console.log("New connection opened.");
 
     let initial, size, message;
     const reset = () => ([initial, size, message] = ["", null, ""]);
     reset();
 
-    sock.on("data", (data) => {
+    sock.on("data", data => {
       const string = data.toString();
 
       if (size === null) {
