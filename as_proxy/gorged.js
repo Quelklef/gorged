@@ -22,44 +22,52 @@ serveFifo("./ipc.sock", message => {
   const matchingImpls = allImpls.filter(impl => !!url.href.match(impl.regex));
   const hasInject = matchingImpls.some(impl => impl.inject);
 
-  const scripts = [];
-
+  let injection;
   if (hasInject) {
-    const script = doc.createElement("script");
-    script.innerHTML = `
+    injection = doc.createElement("script");
+    injection.innerHTML = `
+      const module = {};
       (function() {
-        const module = {};
-        (function() {
-          ${libCode}
-        })();
-        window.GORGED_LIB = module.exports;
+        ${libCode}
       })();
+
+      const lib = module.exports;
+      const doc = document;
+      const url = new URL(window.location.href);
+
+      function infallibly(func) {
+        return function(...args) {
+          try {
+            func(...args);
+          } catch (err) {
+            console.error('vvv GORGED ERROR vvv');
+            console.error(err);
+          }
+        }
+      }
     `;
-    scripts.push(script);
   }
 
   for (const impl of matchingImpls) {
     if (!impl.inject) {
       infallibly(impl.func)(lib, doc, url);
     } else {
-      const script = doc.createElement("script");
-      script.innerHTML = `
-        (function() {
-          const lib = window.GORGED_LIB;
-          const doc = document;
-          const url = new URL(window.location.href);
-          impl(lib, doc, url);
-
-          function impl(...args) {
-            ( ${unevalFunction(impl.func)} )(...args);
-          }
-        })();
+      injection.innerHTML += `
+        // ${impl.intercept.id}, impl #${impl.intercept.impls.indexOf(impl)}
+        infallibly(${unevalFunction(impl.func)})(lib, doc, url);
       `;
-      scripts.push(script);
     }
   }
 
-  doc.head.prepend(...scripts);
+  if (hasInject) {
+    injection.innerHTML = `
+      (function() {
+        ${injection.innerHTML}
+      })();
+    `;
+    doc.head.prepend(injection);
+  }
+
   return dom.serialize();
 });
 

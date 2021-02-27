@@ -5,13 +5,15 @@ const intercepts = [];
 module.exports = { intercepts };
 
 class Impl {
-  constructor({ regex, inject, func }) {
+  constructor({ regex, inject, func, intercept }) {
     if ([typeof regex, typeof inject, typeof func].includes("undefined"))
       throw Error("Bad construction");
 
     this.regex = regex;
     this.inject = inject;
     this.func = func;
+
+    this.intercept = intercept;
   }
 }
 
@@ -31,7 +33,7 @@ class Intercept {
   }
 
   impl(args) {
-    this.impls.push(new Impl(args));
+    this.impls.push(new Impl({ ...args, intercept: this }));
     return this;
   }
 }
