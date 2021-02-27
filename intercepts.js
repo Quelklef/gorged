@@ -120,35 +120,27 @@ intercept({
   },
 });
 
+intercept({
+  regex: /imgur\.com/g,
+  tags: "id=imgur-remove-search site=imgur",
+  desc: `Remove the search bar`,
+  inject: true,
+  impl(lib, doc, url) {
+    lib.watch(doc, ".Searchbar", lib.remove, { one: true });
+  },
+});
+
+intercept({
+  regex: /imgur\.com/g,
+  tags: "id=imgur-remove-right-sidebar site=imgur",
+  desc: `Remove the right-hand sidebar from posts`,
+  inject: true,
+  impl(lib, doc, url) {
+    lib.watch(doc, ".Gallery-Sidebar", lib.hide);
+  },
+});
+
 /* TOOD:
-
-@intercept(
-    slug="imgur:search",
-    regex=imgur_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the search bar from imgur"""
-    remove(
-        ".Searchbar",
-        from_=soup,
-        via="display-none",
-    )
-
-
-@intercept(
-    slug="imgur:right_sidebar",
-    regex=imgur_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the right-hand sidebar from Imgur posts"""
-    remove(
-        ".Gallery-Sidebar",
-        from_=soup,
-        via="opacity-0",
-    )
-
 
 @intercept(
     slug="imgur:left_sidebar",

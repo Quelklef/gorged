@@ -34,6 +34,8 @@ Here are all the effects:
 |reddit-remove-sub-feed|Removes the feed from subreddits|
 |reddit-remove-after-post-feed|Removes the feed that appears after posts|
 |imgur-homepage-feed|Removes the feed from the imgur homepage|
+|imgur-remove-search|Remove the search bar|
+|imgur-remove-right-sidebar|Remove the right-hand sidebar from posts|
 |stackexchange-remove-hot-network-questions|Removes the "Hot Network Questions" sidebar|
 
 [comment]: # (END FLAG DOCS)
