@@ -36,7 +36,17 @@ Here are all the effects:
 |imgur-homepage-feed|Removes the feed from the imgur homepage|
 |imgur-remove-search|Remove the search bar|
 |imgur-remove-right-sidebar|Remove the right-hand sidebar from posts|
+|imgur-remove-after-post-explore-feed|Remove the "Explore Posts" section after posts|
+|facebook-remove-homepage-feed|Remove the homepage feed|
 |stackexchange-remove-hot-network-questions|Removes the "Hot Network Questions" sidebar|
+|stackexchange-landing-feed|Removes the "Top Question" feed from Stack Exchange site landing pages|
+|stackexchange-all-questions-feed|Removes the "All Questions" feed under /questsions|
+|stackexchange-related|Removes the "Related" sidebar|
+|stackexchange-linked|Removes the "Linked" sidebar|
+|stackexchange-rss-link|Removes the "Question feed" link|
+|stackexchange-sticky-note|Removes the yellow "sticky note" on the right side of the page|
+|stackexchange-left-sidebar|Removes the left navigation bar|
+|stackexchange-se-landing-feed|Removes the feed on the landing page of stackexchange.com|
 
 [comment]: # (END FLAG DOCS)
 

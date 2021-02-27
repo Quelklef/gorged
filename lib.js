@@ -86,7 +86,7 @@ function watch(doc, ...args) {
       argument = function (node) {
         const matches = node.querySelectorAll(selector);
         if (matches.length > 0) {
-          matches.forEach(_infallibly(callback));
+          matches.forEach(node => _infallibly(callback)(node));
           return one ? "stop" : "skip";
         }
       };
@@ -102,40 +102,56 @@ function watch(doc, ...args) {
 
   const callback = argument;
 
-  function firstly() {
-    const stop = _fancyWalk(document, callback);
-    if (stop) return;
-  }
+  // Walk the existing DOM
 
-  if ("complete loaded".includes(document.readyState)) {
-    firstly();
-  } else {
-    document.addEventListener("DOMContentLoaded", () => firstly());
-  }
+  const stop = _fancyWalk(document, callback);
+  if (stop) return;
 
-  const observer = new MutationObserver(mutations => {
-    for (const mut of mutations) {
-      const ofInterest = [mut.target, ...mut.addedNodes];
-      for (const node of ofInterest) {
-        const stop = _fancyWalk(node, callback);
-        if (stop) return;
-      }
-    }
-  });
+  // Watch for DOM updates
+  // Note that this WILL catch the browser building the initial tree!
 
-  observer.observe(document, {
+  new MutationObserver(onMutation).observe(document, {
     subtree: true,
     childList: true,
     attributes: true,
     characterData: true,
   });
+
+  function onMutation(mutations) {
+    for (const mut of mutations) {
+      switch (mut.type) {
+        case "childList":
+          for (const node of [mut.target, ...mut.addedNodes]) {
+            const stop = _fancyWalk(node, callback);
+            if (stop) {
+              observer.disconnect();
+              return;
+            }
+          }
+          break;
+
+        case "attributes":
+        case "characterData":
+          const cmd = callback(mut.target);
+          if (cmd === "stop") {
+            observer.disconnect();
+            return;
+          }
+          break;
+
+        default:
+          throw Error("Programmer forgot a case");
+      }
+    }
+  }
 }
 
 function _fancyWalk(root, callback) {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
-  let node = walker.nextNode(); // skip document since it's not an Element
+  let node = walker.currentNode;
+  if (!(node instanceof Element)) node = walker.nextNode();
   while (node) {
-    const cmd = callback(node);
+    const cmd = callback(walker.currentNode);
     switch (cmd) {
       case "skip":
         node = walker.nextSibling() || walker.nextNode();

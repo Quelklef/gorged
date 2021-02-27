@@ -44,6 +44,9 @@ function intercept(args) {
   return intercept;
 }
 
+// =========================================================================== //
+// Twitter
+
 intercept({
   tags: "id=twitter-remove-homepage-feed site=twitter scroller",
   desc: `Removes the timeline from the homepage of Twitter.`,
@@ -80,6 +83,9 @@ intercept({
     lib.watch(doc, '[aria-label="Who to follow"]', lib.remove, { one: true });
   },
 });
+
+// =========================================================================== //
+// Reddit
 
 intercept({
   tags: "id=reddit-remove-homepage-feed site=reddit scroller",
@@ -130,6 +136,9 @@ intercept({
   },
 });
 
+// =========================================================================== //
+// Imgur
+
 intercept({
   tags: "id=imgur-homepage-feed site=imgur scroller",
   desc: `Removes the feed from the imgur homepage`,
@@ -174,61 +183,33 @@ intercept({
     },
   });
 
-/* TOOD:
+intercept({
+  tags: "id=imgur-remove-after-post-explore-feed site=imgur scroller",
+  desc: `Remove the "Explore Posts" section after posts`,
+}).impl({
+  regex: /imgur\.com/,
+  inject: true,
+  func(lib, doc, url) {
+    lib.watch(doc, ".BottomRecirc", lib.remove);
+  },
+});
 
-@intercept(
-    slug="imgur:left_sidebar",
-    regex=imgur_re,
-    enabled_by_default=False,
-)
-def modify(soup, flow, url_obj):
-    """Removes the left-hand sidebar from Imgur posts"""
-    remove(
-        ".Gallery-EngagementBar",
-        from_=soup,
-        via="opacity-0",
-    )
+// =========================================================================== //
+// Facebook
 
+intercept({
+  tags: "id=facebook-remove-homepage-feed site=facebook",
+  desc: `Remove the homepage feed`,
+}).impl({
+  regex: /facebook\.com/,
+  inject: true,
+  func(lib, doc, url) {
+    lib.watch(doc, "div[role=feed]", lib.remove);
+  },
+});
 
-@intercept(
-    slug="imgur:after_post_explore_feed",
-    regex=imgur_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the 'Explore Posts' feed after Imgur posts"""
-    remove(
-        ".BottomRecirc",
-        from_=soup,
-        via="display-none",
-    )
-
-
-facebook_re = re.compile(r"facebook\.com")
-
-
-@intercept(
-    slug="facebook:homepage_feed",
-    regex=facebook_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the feed from the Facebook homepage"""
-    if is_landing(url_obj):
-        remove("div[role=feed]", from_=soup, via="display-none")
-
-
-@intercept(
-    slug="facebook:profile_timeline",
-    regex=facebook_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the timeline from user profiles"""
-    if re.match("/[^/]+/?", url_obj.path):
-        remove("[data-pagelet=ProfileComposer] ~ *", from_=soup, via="display-none")
-
-*/
+// =========================================================================== //
+// StackExchange (the network)
 
 const seDoms = [
   /stackexchange\.com/,
@@ -251,7 +232,8 @@ const seDoms = [
 const seRe = RegExp(seDoms.map(regex => "(" + regex.source + ")").join("|"));
 
 intercept({
-  tags: "id=stackexchange-remove-hot-network-questions pronged",
+  tags:
+    "id=stackexchange-remove-hot-network-questions pronged site=stackexchange+",
   desc: `Removes the "Hot Network Questions" sidebar`,
 }).impl({
   regex: seRe,
@@ -261,99 +243,91 @@ intercept({
   },
 });
 
-/* TODO:
+intercept({
+  tags: "id=stackexchange-landing-feed site=stackexchange+",
+  desc: `Removes the "Top Question" feed from Stack Exchange site landing pages`,
+}).impl({
+  regex: seRe,
+  inject: false,
+  func(lib, doc, url) {
+    if (url.pathname === "/") lib.remove(doc.querySelector("#mainbar"));
+  },
+});
 
-@intercept(
-    slug="stackexchange:landing_feed",
-    regex=stackexchange_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the "Top Question" feed from Stack Exchange site landing pages"""
-    if is_landing(url_obj):
-        remove("#mainbar", from_=soup, via="node-removal")
+intercept({
+  tags: "id=stackexchange-all-questions-feed site=stackexchange+",
+  desc: `Removes the "All Questions" feed under /questsions`,
+}).impl({
+  regex: seRe,
+  inject: false,
+  func(lib, doc, url) {
+    if (url.pathname === "/questions/")
+      lib.remove(doc.querySelector("#mainbar"));
+  },
+});
 
+intercept({
+  tags: "id=stackexchange-related site=stackexchange+",
+  desc: `Removes the "Related" sidebar`,
+}).impl({
+  regex: seRe,
+  inject: false,
+  func(lib, doc, url) {
+    lib.remove(doc.querySelector(".sidebar-related"));
+  },
+});
 
-@intercept(
-    slug="stackexchange:all_questions_feed",
-    regex=stackexchange_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the "All Questions" feed under /questsions"""
-    if url_obj.path == "/questions":
-        remove("#mainbar", from_=soup, via="node-removal")
+intercept({
+  tags: "id=stackexchange-linked site=stackexchange+",
+  desc: `Removes the "Linked" sidebar`,
+}).impl({
+  regex: seRe,
+  inject: false,
+  func(lib, doc, url) {
+    lib.remove(doc.querySelector(".sidebar-linked"));
+  },
+});
 
+intercept({
+  tags: "id=stackexchange-rss-link site=stackexchange+ clutter",
+  desc: `Removes the "Question feed" link`,
+}).impl({
+  regex: seRe,
+  inject: false,
+  func(lib, doc, url) {
+    lib.remove(doc.querySelector("#feed-link"));
+  },
+});
 
-@intercept(
-    slug="stackexchange:hot",
-    regex=stackexchange_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the "Hot Network Questions" sidebar"""
-    remove("#hot-network-questions", from_=soup, via="node-removal")
+intercept({
+  tags: "id=stackexchange-sticky-note site=stackexchange+",
+  desc: `Removes the yellow "sticky note" on the right side of the page`,
+}).impl({
+  regex: seRe,
+  inject: false,
+  func(lib, doc, url) {
+    lib.remove(doc.querySelector("#sidebar .s-sidebarwidget"));
+  },
+});
 
+intercept({
+  tags: "id=stackexchange-left-sidebar site=stackexchange+",
+  desc: `Removes the left navigation bar`,
+}).impl({
+  regex: seRe,
+  inject: false,
+  func(lib, doc, url) {
+    lib.remove(doc.querySelector("#left-sidebar"));
+  },
+});
 
-@intercept(
-    slug="stackexchange:related",
-    regex=stackexchange_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the "Related" sidebar"""
-    remove(".sidebar-related", from_=soup, via="node-removal")
-
-
-@intercept(
-    slug="stackexchange:linked",
-    regex=stackexchange_re,
-    enabled_by_default=False,
-)
-def modify(soup, flow, url_obj):
-    """Removes the "Linked" sidebar"""
-    remove(".sidebar-linked", from_=soup, via="node-removal")
-
-
-@intercept(
-    slug="stackexchange:rss_link",
-    regex=stackexchange_re,
-    enabled_by_default=False,
-)
-def modify(soup, flow, url_obj):
-    """Removes the "Question feed" link"""
-    remove("#feed-link", from_=soup, via="node-removal")
-
-
-@intercept(
-    slug="stackexchange:sticky_note",
-    regex=stackexchange_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the yellow "sticky note" on the right side of the page"""
-    remove("#sidebar .s-sidebarwidget", from_=soup, via="node-removal")
-
-
-@intercept(
-    slug="stackexchange:left_sidebar",
-    regex=stackexchange_re,
-    enabled_by_default=False,
-)
-def modify(soup, flow, url_obj):
-    """Removes the left navigation bar"""
-    remove("#left-sidebar", from_=soup, via="opacity-0")
-
-
-@intercept(
-    slug="stackexchange:se_landing_feed",
-    regex=stackexchange_re,
-    enabled_by_default=True,
-)
-def modify(soup, flow, url_obj):
-    """Removes the feed on the landing page of stackexchange.com"""
-    is_parent_se_site = url_obj.netloc == "stackexchange.com"
-    if is_landing(url_obj) and is_parent_se_site:
-        remove("#question-list", from_=soup, via="node-removal")
-
-*/
+intercept({
+  tags: "id=stackexchange-se-landing-feed site=stackexchange",
+  desc: `Removes the feed on the landing page of stackexchange.com`,
+}).impl({
+  regex: /stackexchange\.com\/?$/,
+  inject: false,
+  func(lib, doc, url) {
+    lib.remove(doc.querySelector("#question-list"));
+  },
+});
