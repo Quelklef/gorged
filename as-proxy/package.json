@@ -1,13 +1,11 @@
 {
-  "name": "new",
-  "version": "1.0.0",
+  "name": "gorged-as-proxy",
+  "version": "0.1.0",
   "description": "",
-  "main": "fifo.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
+  "main": "",
+  "scripts": {},
+  "author": "Quelklef",
+  "license": "UNLICENSED",
   "dependencies": {
     "jsdom": "^16.4.0",
     "node-cleanup": "^2.1.2"

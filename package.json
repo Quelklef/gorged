@@ -1,13 +1,11 @@
 {
   "name": "gorged",
-  "version": "1.0.0",
-  "description": "**What:** Gorged remove feeds, recommendation lists, and other browsing/exploration-related elements from websites like Reddit and Twitter",
-  "main": "intercepts.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
+  "version": "0.1.0",
+  "description": "",
+  "main": "",
+  "scripts": {},
+  "author": "Quelklef",
+  "license": "UNLICENSED",
   "dependencies": {},
   "devDependencies": {
     "prettier": "^2.2.1"
