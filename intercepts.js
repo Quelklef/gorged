@@ -1,11 +1,6 @@
 "use strict";
 // == ALL INTERCEPT IMPLS MUST BE TO-STRING-ABLE == //
 
-// https://stackoverflow.com/a/3561711/4608364
-const escapeRegex = s => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
-
-// -- //
-
 const intercepts = [];
 module.exports = { intercepts };
 
@@ -234,24 +229,24 @@ def modify(soup, flow, url_obj):
 */
 
 const seDoms = [
-  "stackexchange.com",
-  ".stackexchange.com",
-  "askubuntu.com",
-  "mathoverflow.net",
-  "blogoverflow.com",
-  "serverfault.com",
-  "stackoverflow.com",
-  "stackexchange.com",
-  "stackapps.com",
-  "stackmod.blog",
-  "stackoverflow.blog",
-  "stackoverflowbusiness.com",
-  "superuser.com",
-  "tex-talk.net",
-  "thesffblog.com",
+  /stackexchange\.com/,
+  /\.stackexchange\.com/,
+  /askubuntu\.com/,
+  /mathoverflow\.net/,
+  /blogoverflow\.com/,
+  /serverfault\.com/,
+  /stackoverflow\.com/,
+  /stackexchange\.com/,
+  /stackapps\.com/,
+  /stackmod\.blog/,
+  /stackoverflow\.blog/,
+  /stackoverflowbusiness\.com/,
+  /superuser\.com/,
+  /tex-talk\.net/,
+  /thesffblog\.com/,
 ];
 
-const seRe = RegExp(seDoms.map(s => "(" + escapeRegex(s) + ")").join("|"), "g");
+const seRe = RegExp(seDoms.map(regex => "(" + regex.source + ")").join("|"));
 
 intercept({
   tags: "id=stackexchange-remove-hot-network-questions pronged",
