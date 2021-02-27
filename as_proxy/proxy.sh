@@ -17,8 +17,8 @@ until [ -e ./ipc.sock ]; do sleep 0.25; done
 # Start MITM Proxy
 regex=$(node -e '
   const { intercepts } = require("../intercepts.js");
-  const regexes = new Set(intercepts.map(i => i.regex.source));
-  const composite = [...regexes].map(reg => "(" + reg + ")").join("|");
+  const regexes = intercepts.flatMap(intercept => intercept.impls).map(impl => impl.regex);
+  const composite = regexes.map(regex => "(" + regex.source + ")").join("|");
   console.log(composite);
 ')
 mitmdump -s ./mitm.py --allow-hosts "$regex"

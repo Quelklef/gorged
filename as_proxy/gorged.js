@@ -18,14 +18,13 @@ serveFifo("./ipc.sock", (message) => {
 
   const url = new URL(urlStr);
 
-  const matchingIntercepts = intercepts.filter(
-    (intercept) => !!url.href.match(intercept.regex)
-  );
-  const hasInjectIntercept = intercepts.some((intercept) => intercept.inject);
+  const allImpls = intercepts.flatMap((intercept) => intercept.impls);
+  const matchingImpls = allImpls.filter((impl) => !!url.href.match(impl.regex));
+  const hasInject = matchingImpls.some((impl) => impl.inject);
 
   const scripts = [];
 
-  if (hasInjectIntercept) {
+  if (hasInject) {
     const script = doc.createElement("script");
     script.innerHTML = `
       (function() {
@@ -39,22 +38,20 @@ serveFifo("./ipc.sock", (message) => {
     scripts.push(script);
   }
 
-  for (const intercept of matchingIntercepts) {
-    if (!intercept.inject) {
-      infallibly(intercept.impl)(lib, doc, url);
+  for (const impl of matchingImpls) {
+    if (!impl.inject) {
+      infallibly(impl.func)(lib, doc, url);
     } else {
       const script = doc.createElement("script");
       script.innerHTML = `
         (function() {
-          // Intercept ${intercept.id}
-
           const lib = window.GORGED_LIB;
           const doc = document;
           const url = new URL(window.location.href);
-          interceptImpl(lib, doc, url);
+          impl(lib, doc, url);
 
-          function interceptImpl(...args) {
-            ( ${unevalFunction(intercept.impl)} )(...args);
+          function impl(...args) {
+            ( ${unevalFunction(impl.func)} )(...args);
           }
         })();
       `;

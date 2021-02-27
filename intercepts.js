@@ -9,31 +9,51 @@ const escapeRegex = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 const intercepts = [];
 module.exports = { intercepts };
 
-class Intercept {
-  constructor({ regex, desc, tags, inject, impl }) {
+class Impl {
+  constructor({ regex, inject, func }) {
+    if ([typeof regex, typeof inject, typeof func].includes("undefined"))
+      throw Error("Bad construction");
+
     this.regex = regex;
-    this.desc = desc;
-    this.tags = tags.split(" ").filter((t) => !!t);
     this.inject = inject;
-    this.impl = impl;
+    this.func = func;
+  }
+}
+
+class Intercept {
+  constructor({ tags, desc }) {
+    if ([typeof tags, typeof desc].includes("undefined"))
+      throw Error("Bad construction");
+
+    this.tags = tags.split(" ").filter((t) => !!t);
+    this.desc = desc;
+    this.impls = [];
 
     const ids = this.tags.filter((tag) => tag.startsWith("id="));
     if (ids.length !== 1)
       throw Error("Requires exactly one id (tag starting with 'id=')");
     this.id = ids[0].slice("id=".length);
   }
+
+  impl(args) {
+    this.impls.push(new Impl(args));
+    return this;
+  }
 }
 
 function intercept(args) {
-  intercepts.push(new Intercept(args));
+  const intercept = new Intercept(args);
+  intercepts.push(intercept);
+  return intercept;
 }
 
 intercept({
-  regex: /twitter\.com/g,
   tags: "id=twitter-remove-homepage-feed site=twitter scroller",
   desc: `Removes the timeline from the homepage of Twitter.`,
+}).impl({
+  regex: /twitter\.com/g,
   inject: true,
-  impl(lib, doc, url) {
+  func(lib, doc, url) {
     lib.watch(doc, '[aria-label="Timeline: Your Home Timeline"]', lib.remove, {
       one: true,
     });
@@ -41,11 +61,12 @@ intercept({
 });
 
 intercept({
-  regex: /twitter\.com/g,
   tags: "id=twitter-remove-trending site=twitter pronged",
   desc: `Removes the "What's happening" block from Twitter`,
+}).impl({
+  regex: /twitter\.com/g,
   inject: true,
-  impl(lib, doc, url) {
+  func(lib, doc, url) {
     lib.watch(doc, '[aria-label="Timeline: Trending now"]', lib.remove, {
       one: true,
     });
@@ -53,21 +74,23 @@ intercept({
 });
 
 intercept({
-  regex: /twitter\.com/g,
   tags: "id=twitter-follow-suggestions site=twitter clutter",
   desc: `Removes the "Who to follow" block`,
+}).impl({
+  regex: /twitter\.com/g,
   inject: true,
-  impl(lib, doc, url) {
+  func(lib, doc, url) {
     lib.watch(doc, '[aria-label="Who to follow"]', lib.remove, { one: true });
   },
 });
 
 intercept({
-  regex: /(?<!old\.)reddit\.com/g,
   tags: "id=reddit-remove-homepage-feed site=reddit scroller",
   desc: `Removes the homepage feed`,
+}).impl({
+  regex: /(?<!old\.)reddit\.com/g,
   inject: false,
-  impl(lib, doc, url) {
+  func(lib, doc, url) {
     if (url.pathname === "/") {
       doc.head.innerHTML = "";
       doc.body.innerHTML = "";
@@ -76,11 +99,12 @@ intercept({
 });
 
 intercept({
-  regex: /(?<!old\.)reddit\.com/g,
   tags: "id=reddit-remove-sub-feed site=reddit scroller",
   desc: `Removes the feed from subreddits`,
+}).impl({
+  regex: /(?<!old\.)reddit\.com/g,
   inject: true,
-  impl(lib, doc, url) {
+  func(lib, doc, url) {
     if (url.pathname.match(RegExp("/r/[^/?]+/?", "g"))) {
       console.log(url.pathname);
       lib.watch(
@@ -94,11 +118,12 @@ intercept({
 });
 
 intercept({
-  regex: /(?<!old\.)reddit\.com/g,
   tags: "id=reddit-remove-after-post-feed site=reddit pronged",
   desc: `Removes the feed that appears after posts`,
+}).impl({
+  regex: /(?<!old\.)reddit\.com/g,
   inject: true,
-  impl(lib, doc, url) {
+  func(lib, doc, url) {
     lib.watch(
       doc,
       (node) =>
@@ -110,32 +135,35 @@ intercept({
 });
 
 intercept({
-  regex: /imgur\.com/g,
   tags: "id=imgur-homepage-feed site=imgur scroller",
   desc: `Removes the feed from the imgur homepage`,
+}).impl({
+  regex: /imgur\.com/g,
   inject: true,
-  impl(lib, doc, url) {
+  func(lib, doc, url) {
     if (url.pathname === "/")
       lib.watch(doc, ".Spinner-contentWrapper", lib.remove, { one: true });
   },
 });
 
 intercept({
-  regex: /imgur\.com/g,
   tags: "id=imgur-remove-search site=imgur",
   desc: `Remove the search bar`,
+}).impl({
+  regex: /imgur\.com/g,
   inject: true,
-  impl(lib, doc, url) {
+  func(lib, doc, url) {
     lib.watch(doc, ".Searchbar", lib.remove, { one: true });
   },
 });
 
 intercept({
-  regex: /imgur\.com/g,
   tags: "id=imgur-remove-right-sidebar site=imgur",
   desc: `Remove the right-hand sidebar from posts`,
+}).impl({
+  regex: /imgur\.com/g,
   inject: true,
-  impl(lib, doc, url) {
+  func(lib, doc, url) {
     lib.watch(doc, ".Gallery-Sidebar", lib.hide);
   },
 });
@@ -220,11 +248,12 @@ const seRe = RegExp(
 );
 
 intercept({
-  regex: seRe,
   tags: "id=stackexchange-remove-hot-network-questions pronged",
   desc: `Removes the "Hot Network Questions" sidebar`,
+}).impl({
+  regex: seRe,
   inject: false,
-  impl(lib, doc, url) {
+  func(lib, doc, url) {
     doc.querySelector("#hot-network-questions").remove();
   },
 });
