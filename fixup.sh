@@ -48,12 +48,12 @@ node -e '
 
   function makeTable(intercepts) {
     return (
-      "|Id|Description|"
+      "|Name|Description|"
       + "\n|-|-|"
       + "\n"
       + intercepts.map(intercept =>
         joinSurround("|", [
-          intercept.id,
+          "`" + intercept.id + "`",
           intercept.desc,
         ])
       ).join("\n")
