@@ -4,8 +4,8 @@
 module.exports = { watch, hide, remove };
 
 function hide(node) {
-  node.style.opacity = "0 !important";
-  node.style.pointerEvents = "none !important";
+  node.style.opacity = 0;
+  node.style.pointerEvents = "none";
 }
 
 function remove(node) {
