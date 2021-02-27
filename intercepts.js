@@ -106,7 +106,6 @@ intercept({
   inject: true,
   func(lib, doc, url) {
     if (url.pathname.match(RegExp("/r/[^/?]+/?", "g"))) {
-      console.log(url.pathname);
       lib.watch(
         doc,
         ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
