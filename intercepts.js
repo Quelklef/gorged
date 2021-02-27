@@ -232,17 +232,12 @@ const seDoms = [
   /\.stackexchange\.com/,
   /askubuntu\.com/,
   /mathoverflow\.net/,
-  /blogoverflow\.com/,
   /serverfault\.com/,
   /stackoverflow\.com/,
   /stackexchange\.com/,
   /stackapps\.com/,
   /stackmod\.blog/,
-  /stackoverflow\.blog/,
-  /stackoverflowbusiness\.com/,
   /superuser\.com/,
-  /tex-talk\.net/,
-  /thesffblog\.com/,
 ];
 
 const seRe = RegExp(seDoms.map(regex => "(" + regex.source + ")").join("|"));
