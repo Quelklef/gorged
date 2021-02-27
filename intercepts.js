@@ -160,13 +160,23 @@ intercept({
 intercept({
   tags: "id=imgur-remove-right-sidebar site=imgur",
   desc: `Remove the right-hand sidebar from posts`,
-}).impl({
-  regex: /imgur\.com/g,
-  inject: true,
-  func(lib, doc, url) {
-    lib.watch(doc, ".Gallery-Sidebar", lib.hide);
-  },
-});
+})
+  .impl({
+    regex: RegExp(String.raw`imgur\.com/gallery/\w+/?`),
+    inject: true,
+    func(lib, doc, url) {
+      lib.watch(doc, ".Gallery-Sidebar", lib.hide);
+    },
+  })
+  .impl({
+    regex: RegExp(String.raw`imgur\.com/r/[^/]+/\w+/?`),
+    inject: false,
+    func(lib, doc, url) {
+      // For some reason the image loading fails if the bar is
+      // completely gone, so we just hide it instead of removing it
+      doc.querySelector("#side-gallery").style.display = "none";
+    },
+  });
 
 /* TOOD:
 
