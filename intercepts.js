@@ -325,7 +325,7 @@ intercept({
   regex: seRe,
   inject: false,
   func(lib, doc, url) {
-    lib.remove(doc.querySelector("#left-sidebar"));
+    lib.hide(doc.querySelector("#left-sidebar"));
   },
 });
 
