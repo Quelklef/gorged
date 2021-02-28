@@ -1,4 +1,5 @@
 import json
+import re
 
 from fifo_client import FifoClient
 
@@ -15,6 +16,16 @@ def probably_should_be_ignored(flow):
     )
 
 
+def get_csp_nonce(flow):
+    csp = flow.response.headers.get("content-security-policy")
+    if csp is None:
+        return None
+    match = re.search(r".*;\s*script-src\s+[^;]*\s.nonce-(\w+)", csp)
+    if match is None:
+        return None
+    return match.group(1)
+
+
 def response(flow):
     if probably_should_be_ignored(flow):
         return
@@ -25,6 +36,7 @@ def response(flow):
             {
                 "html": html,
                 "url": flow.request.pretty_url,
+                "csp_nonce": get_csp_nonce(flow),
             }
         )
     )

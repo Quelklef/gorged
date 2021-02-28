@@ -11,7 +11,7 @@ const lib = require("../lib.js");
 const libCode = fs.readFileSync("../lib.js");
 
 serveFifo("./ipc.sock", message => {
-  const { html, url: urlStr } = JSON.parse(message);
+  const { html, url: urlStr, csp_nonce: cspNonce } = JSON.parse(message);
 
   const dom = new JSDOM(html);
   const doc = dom.window.document;
@@ -25,6 +25,8 @@ serveFifo("./ipc.sock", message => {
   let injection;
   if (hasInject) {
     injection = doc.createElement("script");
+    if (cspNonce) injection.nonce = cspNonce;
+
     injection.innerHTML = `
       const module = {};
       (function() {
