@@ -57,10 +57,7 @@ intercept({
     lib.watch(
       doc,
       { selector: '[aria-label="Timeline: Your Home Timeline"]' },
-      node => {
-        console.log(node);
-        lib.remove(node);
-      },
+      lib.remove,
       { one: true }
     );
   },
@@ -83,7 +80,7 @@ intercept({
 });
 
 intercept({
-  tags: "id:twitter-follow-suggestions site:twitter clutter",
+  tags: "id:twitter-remove-follow-suggestions site:twitter clutter",
   desc: `Removes the "Who to follow" block`,
 }).impl({
   regex: /twitter\.com/g,
@@ -99,8 +96,8 @@ intercept({
 // Reddit
 
 intercept({
-  tags: "id:reddit-remove-homepage-feed site:reddit scroller",
-  desc: `Removes the homepage feed`,
+  tags: "id:reddit-void-homepage site:reddit scroller",
+  desc: `Blanks the homepage`,
 }).impl({
   regex: /(?<!old\.)reddit\.com/g,
   inject: false,
@@ -154,7 +151,7 @@ intercept({
 // Imgur
 
 intercept({
-  tags: "id:imgur-homepage-feed site:imgur scroller",
+  tags: "id:imgur-remove-homepage-feed site:imgur scroller",
   desc: `Removes the feed from the imgur homepage`,
 }).impl({
   regex: /imgur\.com/g,
@@ -255,7 +252,7 @@ intercept({
 });
 
 intercept({
-  tags: "id:stackexchange-landing-feed site:stackexchange+",
+  tags: "id:stackexchange-remove-homepage-feed site:stackexchange+",
   desc: `Removes the "Top Question" feed from Stack Exchange site landing pages`,
 }).impl({
   regex: seRe,
@@ -266,7 +263,7 @@ intercept({
 });
 
 intercept({
-  tags: "id:stackexchange-all-questions-feed site:stackexchange+",
+  tags: "id:stackexchange-remove-all-questions-feed site:stackexchange+",
   desc: `Removes the "All Questions" feed under /questsions`,
 }).impl({
   regex: seRe,
@@ -278,7 +275,7 @@ intercept({
 });
 
 intercept({
-  tags: "id:stackexchange-related site:stackexchange+",
+  tags: "id:stackexchange-remove-related site:stackexchange+",
   desc: `Removes the "Related" sidebar`,
 }).impl({
   regex: seRe,
@@ -289,7 +286,7 @@ intercept({
 });
 
 intercept({
-  tags: "id:stackexchange-linked site:stackexchange+",
+  tags: "id:stackexchange-remove-linked site:stackexchange+",
   desc: `Removes the "Linked" sidebar`,
 }).impl({
   regex: seRe,
@@ -300,7 +297,7 @@ intercept({
 });
 
 intercept({
-  tags: "id:stackexchange-rss-link site:stackexchange+ clutter",
+  tags: "id:stackexchange-remove-rss-link site:stackexchange+ clutter",
   desc: `Removes the "Question feed" link`,
 }).impl({
   regex: seRe,
@@ -311,7 +308,7 @@ intercept({
 });
 
 intercept({
-  tags: "id:stackexchange-sticky-note site:stackexchange+",
+  tags: "id:stackexchange-remove-sticky-note site:stackexchange+",
   desc: `Removes the yellow "sticky note" on the right side of the page`,
 }).impl({
   regex: seRe,
@@ -322,7 +319,7 @@ intercept({
 });
 
 intercept({
-  tags: "id:stackexchange-left-sidebar site:stackexchange+",
+  tags: "id:stackexchange-remove-left-sidebar site:stackexchange+",
   desc: `Removes the left navigation bar`,
 }).impl({
   regex: seRe,
@@ -333,7 +330,7 @@ intercept({
 });
 
 intercept({
-  tags: "id:stackexchange-se-landing-feed site:stackexchange",
+  tags: "id:stackexchange-remove-se-homepage-feed site:stackexchange",
   desc: `Removes the feed on the landing page of stackexchange.com`,
 }).impl({
   regex: /stackexchange\.com\/?$/,

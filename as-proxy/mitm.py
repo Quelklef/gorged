@@ -7,6 +7,12 @@ fifo = FifoClient("./ipc.sock")
 fifo.open()
 
 
+def is_paused():
+    # TODO: terrible terrible :(
+    with open("./is-paused", "r") as f:
+        return f.read().strip() == "true"
+
+
 def probably_should_be_ignored(flow):
     return not (
         flow.request.data.method in (b"GET", b"POST")
@@ -27,6 +33,9 @@ def get_csp_nonce(flow):
 
 
 def response(flow):
+    if is_paused():
+        return
+
     if probably_should_be_ignored(flow):
         return
 
