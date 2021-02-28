@@ -56,7 +56,7 @@ describe("Gorged", () => {
       await page.goto("https://twitter.com/login", {
         waitUntil: "networkidle2",
       });
-      await page.type("input[type=text]", "gorged.testing@gmail.com");
+      await page.type("input[type=text]", "gorgedtesting");
       await page.type("input[type=password]", "gorged-testing-Z");
       await page.click("[role=button]");
       await page.waitForNavigation();
