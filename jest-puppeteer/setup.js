@@ -6,9 +6,13 @@ const puppeteer = require("puppeteer");
 
 const DIR = path.join(os.tmpdir(), "jest_puppeteer_global_setup");
 
+const chromeProfileLoc =
+  path.dirname(path.dirname(__filename)) + "/chrome-profile";
+
 module.exports = async function () {
   const browser = await puppeteer.launch({
     headless: false,
+    args: [`--user-data-dir=${chromeProfileLoc}`],
   });
   // store the browser instance so we can teardown it later
   // this global is only available in the teardown but not in TestEnvironments

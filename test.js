@@ -37,6 +37,24 @@ function pausedResumed(body) {
 }
 
 describe("Gorged", () => {
+  /*
+
+  == NOTE ==
+
+  Some tests, such as those for Twitter, rely on being logged in,
+  so when we run Puppeteer we tell it to use the Chrome user
+  profile kept at ./chrome-profile.
+
+  To set this up, run
+    mkdir ./chrome-profile &&
+    chromium --user-data-dir="$(realpath ./chrome-profile)"
+  and then:
+    1. Add the MITM certificate
+       (actually, this doesn't seem to be necessary)
+    2. Log in to the requisite sites
+
+  */
+
   let page;
   beforeAll(async () => {
     page = await global.__BROWSER__.newPage();
@@ -51,17 +69,6 @@ describe("Gorged", () => {
   // Twitter
 
   describe("twitter", () => {
-    beforeAll(async () => {
-      // Log in
-      await page.goto("https://twitter.com/login", {
-        waitUntil: "networkidle2",
-      });
-      await page.type("input[type=text]", "gorgedtesting");
-      await page.type("input[type=password]", "gorged-testing-Z");
-      await page.click("[role=button]");
-      await page.waitForNavigation();
-    });
-
     test(
       intercept("twitter-remove-homepage-feed"),
       pausedResumed(async isPaused => {
@@ -198,15 +205,6 @@ describe("Gorged", () => {
   // Facebook
 
   describe("facebook", () => {
-    beforeAll(async () => {
-      // Log in
-      await page.goto("https://facebook.com/");
-      await page.type("#email", "gorged.testing@gmail.com");
-      await page.type("#pass", "gorged-testing-Z");
-      await page.click("[data-testid=royal_login_button]");
-      await page.waitForNavigation();
-    });
-
     test(
       intercept("facebook-remove-homepage-feed"),
       pausedResumed(async isPaused => {

@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-function src_files { find | grep -E "\\.$1\$" | grep -vE '/(venv|node_modules|__pycache__)/'; }
+function src_files { find | grep -E "\\.$1\$" | grep -vE '/(venv|node_modules|__pycache__|chrome-profile)/'; }
 
 # workflow
 [ "${1:-}" = "-w" ] && {
