@@ -135,7 +135,7 @@ function watch(doc, ...args) {
     attributes: true,
   });
 
-  function onMutation(mutations) {
+  function onMutation(mutations, observer) {
     for (const mut of mutations) {
       switch (mut.type) {
         case "childList":

@@ -123,8 +123,7 @@ intercept({
           selector:
             ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
         },
-        lib.remove,
-        { one: true }
+        lib.remove
       );
     }
   },

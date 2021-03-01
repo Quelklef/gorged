@@ -12,8 +12,12 @@ const chromeProfileLoc =
 module.exports = async function () {
   const browser = await puppeteer.launch({
     headless: false,
-    args: [`--user-data-dir=${chromeProfileLoc}`],
+    args: [
+      `--user-data-dir=${chromeProfileLoc}`,
+      "--proxy-server=127.0.0.1:8080",
+    ],
   });
+
   // store the browser instance so we can teardown it later
   // this global is only available in the teardown but not in TestEnvironments
   global.__BROWSER_GLOBAL__ = browser;

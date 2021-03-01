@@ -11,6 +11,11 @@ function resumeGorged() {
 }
 
 jest.setTimeout(60 * 1000);
+const antiFlakeDelay = 3250;
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function intercept(id) {
   if (!intercepts.some(intercept => intercept.id === id))
@@ -23,7 +28,19 @@ async function tangible(node) {
     // exists
     !!node &&
     // is visible
-    !!node.boundingBox()
+    node.evaluate(node => {
+      for (let anc = node; anc instanceof Element; anc = anc.parentNode) {
+        const styles = getComputedStyle(anc);
+        if (
+          styles.opacity === "0" ||
+          styles.display === "none" ||
+          styles.visibility === "hidden"
+        ) {
+          return false;
+        }
+      }
+      return true;
+    })
   );
 }
 
@@ -31,9 +48,20 @@ function pausedResumed(body) {
   return async function () {
     pauseGorged();
     await body(true);
+    await sleep(antiFlakeDelay);
     resumeGorged();
     await body(false);
   };
+}
+
+async function hardRefresh(page) {
+  await page.evaluate(_ => location.reload(true));
+  await page.waitForTimeout(antiFlakeDelay);
+  // v https://github.com/puppeteer/puppeteer/issues/1353#issuecomment-723164059
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: "networkidle2" }),
+    page.evaluate(() => history.pushState(null, null, null)),
+  ]);
 }
 
 describe("Gorged", () => {
@@ -55,14 +83,24 @@ describe("Gorged", () => {
 
   */
 
+  // TODO: during testing, put the proxy at a different location
+  //       (i.e. not 127.0.0.1:8080) than normal in order to
+  //       better isolate tests
+
   let page;
   beforeAll(async () => {
     page = await global.__BROWSER__.newPage();
     await page.setViewport({ width: 1400, height: 800 });
+    await page.setCacheEnabled(false);
   });
 
   afterAll(() => {
     resumeGorged();
+  });
+
+  afterEach(async () => {
+    // seems to possibly reduce test flakiness
+    await sleep(antiFlakeDelay);
   });
 
   // ======================================================================== //
@@ -72,6 +110,7 @@ describe("Gorged", () => {
     test(
       intercept("twitter-remove-homepage-feed"),
       pausedResumed(async isPaused => {
+        await hardRefresh(page);
         await page.goto("https://twitter.com", {
           waitUntil: "networkidle2",
         });
@@ -85,6 +124,7 @@ describe("Gorged", () => {
     test(
       intercept("twitter-remove-trending"),
       pausedResumed(async isPaused => {
+        await hardRefresh(page);
         await page.goto("https://twitter.com", {
           waitUntil: "networkidle2",
         });
@@ -96,6 +136,7 @@ describe("Gorged", () => {
     test(
       intercept("twitter-remove-follow-suggestions"),
       pausedResumed(async isPaused => {
+        await hardRefresh(page);
         await page.goto("https://twitter.com", {
           waitUntil: "networkidle2",
         });
@@ -122,7 +163,7 @@ describe("Gorged", () => {
       intercept("reddit-remove-sub-feed"),
       pausedResumed(async isPaused => {
         await page.goto("https://reddit.com/r/cats");
-        const feed = await page.$(".ListingLayout-outerContainer");
+        const feed = await page.$(".Post");
         expect(await tangible(feed)).toBe(isPaused);
       })
     );
@@ -131,20 +172,11 @@ describe("Gorged", () => {
       intercept("reddit-remove-after-post-feed"),
       pausedResumed(async isPaused => {
         await page.goto("https://www.reddit.com/r/cats/comments/ln1fep/");
-
-        const feed = await page.$eval("html", html => {
-          const nodes = [html];
-          let node;
-          while ((node = nodes.pop())) {
-            if (node.innerText.match(/^More posts from the .* community$/i)) {
-              return node;
-            } else {
-              nodes.push(...node.childNodes);
-            }
-          }
-        });
-
-        expect(await tangible(feed)).toBe(isPaused);
+        await page.waitForTimeout(1800);
+        await page.evaluate(_ => window.scrollBy(0, 1000));
+        await page.waitForTimeout(1800);
+        const posts = await page.$$(".Post");
+        expect(posts.length === 1).toBe(isPaused);
       })
     );
   });
@@ -194,7 +226,13 @@ describe("Gorged", () => {
     test(
       intercept("imgur-remove-after-post-explore-feed"),
       pausedResumed(async isPaused => {
-        await page.goto("https://imgur.com/gallery/NObjUFk");
+        await page.goto("https://imgur.com/gallery/NObjUFk", {
+          waitUntil: "networkidle2",
+        });
+        for (let i = 0; i < 3; i++) {
+          await page.waitForTimeout(1800);
+          await page.evaluate(_ => window.scrollBy(0, 1000));
+        }
         const feed = await page.$(".BottomRecirc");
         expect(await tangible(feed)).toBe(isPaused);
       })
@@ -239,7 +277,9 @@ describe("Gorged", () => {
       flaky(
         5,
         pausedResumed(async isPaused => {
-          await page.goto("https://stackoverflow.com/questions/1699748/");
+          await page.goto("https://stackoverflow.com/questions/1699748/", {
+            waitUntil: "domcontentloaded",
+          });
           const widget = await page.$("#hot-network-questions");
           expect(await tangible(widget)).toBe(isPaused);
         })
@@ -249,7 +289,9 @@ describe("Gorged", () => {
     test(
       intercept("stackexchange-remove-homepage-feed"),
       pausedResumed(async isPaused => {
-        await page.goto("https://stackexchange.com/");
+        await page.goto("https://stackexchange.com/", {
+          waitUntil: "domcontentloaded",
+        });
         const aQuestion = await page.$(".question-link");
         expect(await tangible(aQuestion)).toBe(isPaused);
       })
@@ -258,7 +300,9 @@ describe("Gorged", () => {
     test(
       intercept("stackexchange-remove-all-questions-feed"),
       pausedResumed(async isPaused => {
-        await page.goto("https://worldbuilding.stackexchange.com/questions/");
+        await page.goto("https://worldbuilding.stackexchange.com/questions/", {
+          waitUntil: "domcontentloaded",
+        });
         const aQuestionLink = await page.$(".question-hyperlink");
         expect(await tangible(aQuestionLink)).toBe(isPaused);
       })
@@ -270,7 +314,8 @@ describe("Gorged", () => {
         5,
         pausedResumed(async isPaused => {
           await page.goto(
-            "https://worldbuilding.stackexchange.com/questions/196909"
+            "https://worldbuilding.stackexchange.com/questions/196909",
+            { waitUntil: "domcontentloaded" }
           );
           const relatedH4 = await page.$("#h-related");
           expect(await tangible(relatedH4)).toBe(isPaused);
@@ -284,7 +329,8 @@ describe("Gorged", () => {
         5,
         pausedResumed(async isPaused => {
           await page.goto(
-            "https://worldbuilding.stackexchange.com/questions/196909"
+            "https://worldbuilding.stackexchange.com/questions/196909",
+            { waitUntil: "domcontentloaded" }
           );
           const linkedH4 = await page.$("#h-linked");
           expect(await tangible(linkedH4)).toBe(isPaused);
@@ -296,7 +342,8 @@ describe("Gorged", () => {
       intercept("stackexchange-remove-rss-link"),
       pausedResumed(async isPaused => {
         await page.goto(
-          "https://worldbuilding.stackexchange.com/questions/196909"
+          "https://worldbuilding.stackexchange.com/questions/196909",
+          { waitUntil: "domcontentloaded" }
         );
         const rss = await page.$("#feed-link");
         expect(await tangible(rss)).toBe(isPaused);
@@ -309,7 +356,8 @@ describe("Gorged", () => {
         5,
         pausedResumed(async isPaused => {
           await page.goto(
-            "https://worldbuilding.stackexchange.com/questions/196909"
+            "https://worldbuilding.stackexchange.com/questions/196909",
+            { waitUntil: "domcontentloaded" }
           );
           const stickyNote = await page.$(".s-sidebarwidget");
           expect(await tangible(stickyNote)).toBe(isPaused);
@@ -321,7 +369,8 @@ describe("Gorged", () => {
       intercept("stackexchange-remove-left-sidebar"),
       pausedResumed(async isPaused => {
         await page.goto(
-          "https://worldbuilding.stackexchange.com/questions/196909"
+          "https://worldbuilding.stackexchange.com/questions/196909",
+          { waitUntil: "domcontentloaded" }
         );
         const usersLink = await page.$("#nav-users");
         expect(await tangible(usersLink)).toBe(isPaused);
@@ -331,7 +380,9 @@ describe("Gorged", () => {
     test(
       intercept("stackexchange-remove-se-homepage-feed"),
       pausedResumed(async isPaused => {
-        await page.goto("https://stackexchange.com/");
+        await page.goto("https://stackexchange.com/", {
+          waitUntil: "domcontentloaded",
+        });
         const feed = await page.$("#question-list");
         expect(await tangible(feed)).toBe(isPaused);
       })
