@@ -100,7 +100,7 @@ intercept({
   desc: `Blanks the homepage`,
 }).impl({
   regex: /(?<!old\.)reddit\.com/g,
-  inject: false,
+  inject: true,
   func(lib, doc, url) {
     if (url.pathname === "/") {
       doc.head.innerHTML = "";
@@ -187,11 +187,16 @@ intercept({
   })
   .impl({
     regex: RegExp(String.raw`imgur\.com/r/[^/]+/\w+/?`),
-    inject: false,
+    inject: true,
     func(lib, doc, url) {
       // For some reason the image loading fails if the bar is
       // completely gone, so we just hide it instead of removing it
-      doc.querySelector("#side-gallery").style.display = "none";
+      lib.watch(
+        doc,
+        { selector: "#side-gallery" },
+        node => (node.style.display = "none"),
+        { one: true }
+      );
     },
   });
 
@@ -244,9 +249,11 @@ intercept({
   desc: `Removes the "Hot Network Questions" sidebar`,
 }).impl({
   regex: seRe,
-  inject: false,
+  inject: true,
   func(lib, doc, url) {
-    doc.querySelector("#hot-network-questions").remove();
+    lib.watch(doc, { selector: "#hot-network-questions" }, lib.remove, {
+      one: true,
+    });
   },
 });
 
@@ -255,9 +262,10 @@ intercept({
   desc: `Removes the "Top Question" feed from Stack Exchange site landing pages`,
 }).impl({
   regex: seRe,
-  inject: false,
+  inject: true,
   func(lib, doc, url) {
-    if (url.pathname === "/") lib.remove(doc.querySelector("#mainbar"));
+    if (url.pathname === "/")
+      lib.watch(doc, { selector: "#mainbar" }, lib.remove, { one: true });
   },
 });
 
@@ -266,10 +274,10 @@ intercept({
   desc: `Removes the "All Questions" feed under /questsions`,
 }).impl({
   regex: seRe,
-  inject: false,
+  inject: true,
   func(lib, doc, url) {
     if (url.pathname === "/questions/")
-      lib.remove(doc.querySelector("#mainbar"));
+      lib.watch(doc, { selector: "#mainbar" }, lib.remove, { one: true });
   },
 });
 
@@ -278,9 +286,9 @@ intercept({
   desc: `Removes the "Related" sidebar`,
 }).impl({
   regex: seRe,
-  inject: false,
+  inject: true,
   func(lib, doc, url) {
-    lib.remove(doc.querySelector(".sidebar-related"));
+    lib.watch(doc, { selector: ".sidebar-related" }, lib.remove, { one: true });
   },
 });
 
@@ -289,9 +297,9 @@ intercept({
   desc: `Removes the "Linked" sidebar`,
 }).impl({
   regex: seRe,
-  inject: false,
+  inject: true,
   func(lib, doc, url) {
-    lib.remove(doc.querySelector(".sidebar-linked"));
+    lib.watch(doc, { selector: ".sidebar-linked" }, lib.remove, { one: true });
   },
 });
 
@@ -300,9 +308,9 @@ intercept({
   desc: `Removes the "Question feed" link`,
 }).impl({
   regex: seRe,
-  inject: false,
+  inject: true,
   func(lib, doc, url) {
-    lib.remove(doc.querySelector("#feed-link"));
+    lib.watch(doc, { selector: "#feed-link" }, lib.remove, { one: true });
   },
 });
 
@@ -311,9 +319,11 @@ intercept({
   desc: `Removes the yellow "sticky note" on the right side of the page`,
 }).impl({
   regex: seRe,
-  inject: false,
+  inject: true,
   func(lib, doc, url) {
-    lib.remove(doc.querySelector("#sidebar .s-sidebarwidget"));
+    lib.watch(doc, { selector: "#sidebar .s-sidebarwidget" }, lib.remove, {
+      one: true,
+    });
   },
 });
 
@@ -322,9 +332,9 @@ intercept({
   desc: `Removes the left navigation bar`,
 }).impl({
   regex: seRe,
-  inject: false,
+  inject: true,
   func(lib, doc, url) {
-    lib.hide(doc.querySelector("#left-sidebar"));
+    lib.watch(doc, { selector: "#left-sidebar" }, lib.hide, { one: true });
   },
 });
 
@@ -333,8 +343,8 @@ intercept({
   desc: `Removes the feed on the landing page of stackexchange.com`,
 }).impl({
   regex: /stackexchange\.com\/?$/,
-  inject: false,
+  inject: true,
   func(lib, doc, url) {
-    lib.remove(doc.querySelector("#question-list"));
+    lib.watch(doc, { selector: "#question-list" }, lib.remove, { one: true });
   },
 });
