@@ -12,13 +12,7 @@
     .filter(impl => url.href.match(impl.regex));
 
   for (const impl of matchingImpls) {
-    if (!impl.inject) {
-      document.addEventListener("DOMContentLoaded", () => {
-        infallibly(impl.func)(lib, doc, url);
-      });
-    } else {
-      infallibly(impl.func)(lib, doc, url);
-    }
+    infallibly(impl.func)(lib, doc, url);
   }
 
   function infallibly(func) {

@@ -5,12 +5,11 @@ const intercepts = [];
 module.exports = { intercepts };
 
 class Impl {
-  constructor({ regex, inject, func, intercept }) {
-    if ([typeof regex, typeof inject, typeof func].includes("undefined"))
+  constructor({ regex, func, intercept }) {
+    if ([typeof regex, typeof func].includes("undefined"))
       throw Error("Bad construction");
 
     this.regex = regex;
-    this.inject = inject;
     this.func = func;
 
     this.intercept = intercept;
@@ -52,7 +51,6 @@ intercept({
   desc: `Removes the timeline from the homepage of Twitter.`,
 }).impl({
   regex: /twitter\.com/g,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(
       doc,
@@ -68,7 +66,6 @@ intercept({
   desc: `Removes the "What's happening" block from Twitter`,
 }).impl({
   regex: /twitter\.com/g,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(
       doc,
@@ -84,7 +81,6 @@ intercept({
   desc: `Removes the "Who to follow" block`,
 }).impl({
   regex: /twitter\.com/g,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: '[aria-label="Who to follow"]' }, lib.remove, {
       one: true,
@@ -100,7 +96,6 @@ intercept({
   desc: `Blanks the homepage`,
 }).impl({
   regex: /(?<!old\.)reddit\.com/g,
-  inject: true,
   func(lib, doc, url) {
     if (url.pathname === "/") {
       doc.head.innerHTML = "";
@@ -114,7 +109,6 @@ intercept({
   desc: `Removes the feed from subreddits`,
 }).impl({
   regex: /(?<!old\.)reddit\.com/g,
-  inject: true,
   func(lib, doc, url) {
     if (url.pathname.match(RegExp("/r/[^/?]+/?", "g"))) {
       lib.watch(
@@ -134,7 +128,6 @@ intercept({
   desc: `Removes the feed that appears after posts`,
 }).impl({
   regex: /(?<!old\.)reddit\.com/g,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(
       doc,
@@ -154,7 +147,6 @@ intercept({
   desc: `Removes the feed from the imgur homepage`,
 }).impl({
   regex: /imgur\.com/g,
-  inject: true,
   func(lib, doc, url) {
     if (url.pathname === "/")
       lib.watch(doc, { selector: ".Spinner-contentWrapper" }, lib.remove, {
@@ -168,7 +160,6 @@ intercept({
   desc: `Remove the search bar`,
 }).impl({
   regex: /imgur\.com/g,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: ".Searchbar" }, lib.remove, { one: true });
   },
@@ -180,14 +171,12 @@ intercept({
 })
   .impl({
     regex: RegExp(String.raw`imgur\.com/gallery/\w+/?`),
-    inject: true,
     func(lib, doc, url) {
       lib.watch(doc, { selector: ".Gallery-Sidebar" }, lib.hide);
     },
   })
   .impl({
     regex: RegExp(String.raw`imgur\.com/r/[^/]+/\w+/?`),
-    inject: true,
     func(lib, doc, url) {
       // For some reason the image loading fails if the bar is
       // completely gone, so we just hide it instead of removing it
@@ -205,7 +194,6 @@ intercept({
   desc: `Remove the "Explore Posts" section after posts`,
 }).impl({
   regex: /imgur\.com/,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: ".BottomRecirc" }, lib.remove);
   },
@@ -219,7 +207,6 @@ intercept({
   desc: `Remove the homepage feed`,
 }).impl({
   regex: /facebook\.com/,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: "div[role=feed]" }, lib.remove);
   },
@@ -249,7 +236,6 @@ intercept({
   desc: `Removes the "Hot Network Questions" sidebar`,
 }).impl({
   regex: seRe,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: "#hot-network-questions" }, lib.remove, {
       one: true,
@@ -262,7 +248,6 @@ intercept({
   desc: `Removes the "Top Question" feed from Stack Exchange site landing pages`,
 }).impl({
   regex: seRe,
-  inject: true,
   func(lib, doc, url) {
     if (url.pathname === "/")
       lib.watch(doc, { selector: "#mainbar" }, lib.remove, { one: true });
@@ -274,7 +259,6 @@ intercept({
   desc: `Removes the "All Questions" feed under /questsions`,
 }).impl({
   regex: seRe,
-  inject: true,
   func(lib, doc, url) {
     if (url.pathname === "/questions/")
       lib.watch(doc, { selector: "#mainbar" }, lib.remove, { one: true });
@@ -286,7 +270,6 @@ intercept({
   desc: `Removes the "Related" sidebar`,
 }).impl({
   regex: seRe,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: ".sidebar-related" }, lib.remove, { one: true });
   },
@@ -297,7 +280,6 @@ intercept({
   desc: `Removes the "Linked" sidebar`,
 }).impl({
   regex: seRe,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: ".sidebar-linked" }, lib.remove, { one: true });
   },
@@ -308,7 +290,6 @@ intercept({
   desc: `Removes the "Question feed" link`,
 }).impl({
   regex: seRe,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: "#feed-link" }, lib.remove, { one: true });
   },
@@ -319,7 +300,6 @@ intercept({
   desc: `Removes the yellow "sticky note" on the right side of the page`,
 }).impl({
   regex: seRe,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: "#sidebar .s-sidebarwidget" }, lib.remove, {
       one: true,
@@ -332,7 +312,6 @@ intercept({
   desc: `Removes the left navigation bar`,
 }).impl({
   regex: seRe,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: "#left-sidebar" }, lib.hide, { one: true });
   },
@@ -343,7 +322,6 @@ intercept({
   desc: `Removes the feed on the landing page of stackexchange.com`,
 }).impl({
   regex: /stackexchange\.com\/?$/,
-  inject: true,
   func(lib, doc, url) {
     lib.watch(doc, { selector: "#question-list" }, lib.remove, { one: true });
   },

@@ -20,55 +20,47 @@ serveFifo("./ipc.sock", message => {
 
   const allImpls = intercepts.flatMap(intercept => intercept.impls);
   const matchingImpls = allImpls.filter(impl => !!url.href.match(impl.regex));
-  const hasInject = matchingImpls.some(impl => impl.inject);
 
-  let injection;
-  if (hasInject) {
-    injection = doc.createElement("script");
-    if (cspNonce) injection.nonce = cspNonce;
+  if (matchingImpls.length === 0) return dom.serialize();
 
-    injection.innerHTML = `
-      const module = {};
-      (function() {
-        ${libCode}
-      })();
+  const injection = doc.createElement("script");
+  if (cspNonce) injection.nonce = cspNonce;
 
-      const lib = module.exports;
-      const doc = document;
-      const url = new URL(window.location.href);
+  injection.innerHTML = `
+    const module = {};
+    (function() {
+      ${libCode}
+    })();
 
-      function infallibly(func) {
-        return function(...args) {
-          try {
-            func(...args);
-          } catch (err) {
-            console.error('vvv GORGED ERROR vvv');
-            console.error(err);
-          }
+    const lib = module.exports;
+    const doc = document;
+    const url = new URL(window.location.href);
+
+    function infallibly(func) {
+      return function(...args) {
+        try {
+          func(...args);
+        } catch (err) {
+          console.error('vvv GORGED ERROR vvv');
+          console.error(err);
         }
       }
-    `;
-  }
+    }
+  `;
 
   for (const impl of matchingImpls) {
-    if (!impl.inject) {
-      infallibly(impl.func)(lib, doc, url);
-    } else {
-      injection.innerHTML += `
-        // ${impl.intercept.id}, impl #${impl.intercept.impls.indexOf(impl)}
-        infallibly(${unevalFunction(impl.func)})(lib, doc, url);
-      `;
-    }
+    injection.innerHTML += `
+      // ${impl.intercept.id}, impl #${impl.intercept.impls.indexOf(impl)}
+      infallibly(${unevalFunction(impl.func)})(lib, doc, url);
+    `;
   }
 
-  if (hasInject) {
-    injection.innerHTML = `
-      (function() {
-        ${injection.innerHTML}
-      })();
-    `;
-    doc.head.prepend(injection);
-  }
+  injection.innerHTML = `
+    (function() {
+      ${injection.innerHTML}
+    })();
+  `;
+  doc.head.prepend(injection);
 
   return dom.serialize();
 });
