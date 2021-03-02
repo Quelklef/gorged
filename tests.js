@@ -50,20 +50,44 @@ function section(t) {
 
 const selectedTestsRegex = new RegExp(process.argv[2] || "|always");
 
-async function testPausedResumed(name, body) {
-  if (!name.match(selectedTestsRegex)) return;
+async function withSpinner(body) {
+  const states = "⢄⢂⢁⡁⡈⡐⡠";
 
-  process.stdout.write(`${name}: `);
+  let state = 0;
+  let backspace = "";
+  function spin() {
+    process.stdout.write(backspace + chalk.yellow(states[state]) + " ");
+    backspace = "\b\b";
+    state = (state + 1) % states.length;
+  }
+
+  const id = setInterval(spin, 75);
+
+  try {
+    return await body();
+  } finally {
+    clearInterval(id);
+    process.stdout.write(backspace);
+  }
+}
+
+async function testPausedResumed(name, body) {
+  process.stdout.write(name + ": ");
+
+  if (!name.match(selectedTestsRegex)) {
+    console.log(chalk.yellow.dim("–"));
+    return;
+  }
 
   const pass = chalk.greenBright("✓");
-  const fail = chalk.redBright("✗");
+  const fail = chalk.bgRedBright.black("✗");
 
   let pausedEx, resumedEx;
 
   setGorged({ isPaused: true });
 
   try {
-    await body(true);
+    await withSpinner(async () => await body(true));
     process.stdout.write(pass);
   } catch (ex) {
     pausedEx = ex;
@@ -76,7 +100,7 @@ async function testPausedResumed(name, body) {
     setGorged({ isPaused: false });
 
     try {
-      await body(false);
+      await withSpinner(async () => await body(false));
       process.stdout.write(pass);
     } catch (ex) {
       resumedEx = ex;
