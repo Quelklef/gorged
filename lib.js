@@ -17,7 +17,7 @@ function* walk(node) {
   for (const child of node.childNodes) yield* walk(child);
 }
 
-function watch(doc, ...args) {
+function watch(doc, args) {
   /*
 
   Calls the callback on all nodes in the existing document, and
@@ -26,110 +26,87 @@ function watch(doc, ...args) {
 
   Admits several call signatures:
 
-  > watch(doc, { selector: cssSelectorString }, callback)
-  > watch(doc, { selector: cssSelectorString }, callback, { one: true })
-  > watch(doc, { xpath: xpathString }, callback)
-  > watch(doc, { xpath: xpathString }, callback, { one: true })
-  Filters nodes by the given css selector or xpath
-  If one=true is given, stops after the first node matched.
-
-  > watch(doc, predicate, callback)
-  > watch(doc, predicate, callback, { one: true })
-  Filters nodes by the predicate.
-  If one=true is given, stops after the first node matched.
+  > watch(doc, { selector: cssSelectorString, do: callback, once: true|false })
+  > watch(doc, { xpath: xpathString,          do: callback, once: true|false })
+  > watch(doc, { predicate: predicate,        do: callback, once: true|false })
+  Watches the document `doc` for nodes matching the given selector/xpath/predicate.
+  If once:true is given, stops after the first match.
 
   > watch(doc, callback)
-  Does not filter nodes.
-  If the callback returns 'skip', the current node will not be descended into.
-  If the callback returns 'stop', the watching will cease.
-
-  If an intercept uses this function, then the intercept MUST
-  be marked inect=true.
+  Watches the document `doc` for mutations, invoking the callback on modified/added
+  nodes. If the callback returns 'skip', the current node will not be descended
+  into (in the case of node addition); if the callbkac returns 'stop', the watching
+  will cease.
 
   */
 
-  // Argument parsing
-  let argument;
+  const signatureOk =
+    args instanceof Function ||
+    (1 ===
+      "selector xpath predicate".split(" ").filter(k => k in args).length &&
+      args.do instanceof Function &&
+      [true, false].includes(args.once));
 
-  // Signature #3
-  if (args.length === 1) {
-    argument = _infallibly(args[0]);
-  }
+  if (!signatureOk) throw Error("Bad call signature");
 
-  // Signature #2
-  else if (args.length > 1 && args[0] instanceof Function) {
-    const predicate = args[0];
-    const callback = args[1];
-    const one = (args[2] || {}).one || false;
-
-    argument = function (node) {
-      if (predicate(node)) {
-        _infallibly(callback)(node);
-        if (one) return "stop";
+  if (args instanceof Function) {
+    return watch_impl(doc, args);
+  } else if ("predicate" in args) {
+    return watch_impl(doc, node => {
+      if (args.predicate(node)) {
+        args.do(node);
+        if (args.once) return "stop";
       }
-    };
-  }
+    });
+  } else if ("selector" in args || "xpath" in args) {
+    let getMatches;
+    if ("selector" in args && args.once) {
+      getMatches = node => {
+        const match = node.querySelector(args.selector);
+        return match ? [match] : [];
+      };
+    } else if ("selector" in args && !args.once) {
+      getMatches = node => node.querySelectorAll(args.selector);
+    } else if ("xpath" in args) {
+      getMatches = function* (node) {
+        const matcher = doc.evaluate(
+          args.xpath,
+          node,
+          null,
+          XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+          null
+        );
+        let match;
+        for (let i = 0; (match = matcher.snapshotItem(i)); i++) yield match;
+      };
+    } else {
+      throw Error("impossible");
+    }
 
-  // Signature #1
-  else if (args.length > 1 && (args[0].selector || args[0].xpath)) {
-    const selectorType = args[0].selector ? "css" : "xpath";
-    const selector = args[0].selector || args[0].xpath;
-    const callback = args[1];
-    const one = (args[2] || {}).one || false;
-
-    const getMatches = (() => {
-      if (selectorType === "css" && one)
-        return node => {
-          const match = node.querySelector(selector);
-          return match ? [match] : [];
-        };
-
-      if (selectorType === "css" && !one)
-        return node => node.querySelectorAll(selector);
-
-      if (selectorType === "xpath")
-        return function* (node) {
-          const matcher = document.evaluate(
-            selector,
-            node,
-            null,
-            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-            null
-          );
-          let match;
-          for (let i = 0; (match = matcher.snapshotItem(i)); i++) yield match;
-        };
-
-      throw Error("Bad call");
-    })();
-
-    argument = function (node) {
+    return watch_impl(doc, node => {
       for (const match of getMatches(node)) {
-        _infallibly(callback)(match);
-        if (one) return "stop";
+        _infallibly(args.do)(match);
+        if (args.once) return "stop";
       }
       return "skip";
-    };
+    });
   }
 
-  // Uh oh
-  else {
-    throw Error("Unknown call signature");
-  }
+  throw Error("Programmer forgot a case");
+}
 
-  // -- Actual function body -- //
-
-  const callback = argument;
+function watch_impl(doc, callback) {
+  /* Same as watch but only supports one signature */
 
   // Walk the existing DOM
 
-  const stop = _fancyWalk(document, callback);
+  const stop = _fancyWalk(doc, { over: doc, do: callback });
   if (stop) return;
 
   // Watch for DOM updates
-  // Note that this WILL catch the browser building the initial tree!
+  // Note that this will catch the browser building the initial tree :)
 
-  new MutationObserver(onMutation).observe(document, {
+  new MutationObserver(onMutation).observe(doc, {
     subtree: true,
     childList: true,
     attributes: true,
@@ -139,7 +116,7 @@ function watch(doc, ...args) {
     for (const mut of mutations) {
       switch (mut.type) {
         case "childList":
-          const stop = _fancyWalk(mut.target, callback);
+          const stop = _fancyWalk(doc, { over: mut.target, do: callback });
           if (stop) {
             observer.disconnect();
             return;
@@ -161,8 +138,8 @@ function watch(doc, ...args) {
   }
 }
 
-function _fancyWalk(root, callback) {
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+function _fancyWalk(doc, { over: root, do: callback }) {
+  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
   let node = walker.currentNode;
   if (!(node instanceof Element)) node = walker.nextNode();
   while (node) {

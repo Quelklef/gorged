@@ -52,12 +52,11 @@ intercept({
 }).impl({
   regex: /twitter\.com/g,
   func(lib, doc, url) {
-    lib.watch(
-      doc,
-      { selector: '[aria-label="Timeline: Your Home Timeline"]' },
-      lib.remove,
-      { one: true }
-    );
+    lib.watch(doc, {
+      selector: '[aria-label="Timeline: Your Home Timeline"]',
+      do: lib.remove,
+      once: true,
+    });
   },
 });
 
@@ -67,12 +66,11 @@ intercept({
 }).impl({
   regex: /twitter\.com/g,
   func(lib, doc, url) {
-    lib.watch(
-      doc,
-      { selector: '[aria-label="Timeline: Trending now"]' },
-      lib.remove,
-      { one: true }
-    );
+    lib.watch(doc, {
+      selector: '[aria-label="Timeline: Trending now"]',
+      do: lib.remove,
+      once: true,
+    });
   },
 });
 
@@ -82,8 +80,10 @@ intercept({
 }).impl({
   regex: /twitter\.com/g,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: '[aria-label="Who to follow"]' }, lib.remove, {
-      one: true,
+    lib.watch(doc, {
+      selector: '[aria-label="Who to follow"]',
+      do: lib.remove,
+      once: true,
     });
   },
 });
@@ -97,10 +97,12 @@ intercept({
 }).impl({
   regex: /(?<!old\.)reddit\.com/g,
   func(lib, doc, url) {
-    if (url.pathname === "/") {
-      doc.head.innerHTML = "";
-      doc.body.innerHTML = "";
-    }
+    if (url.pathname === "/")
+      lib.watch(doc, {
+        selector: "html",
+        do: html => (html.head.innerHTML = html.body.innerHTML = ""),
+        once: true,
+      });
   },
 });
 
@@ -111,14 +113,12 @@ intercept({
   regex: /(?<!old\.)reddit\.com/g,
   func(lib, doc, url) {
     if (url.pathname.match(RegExp("/r/[^/?]+/?", "g"))) {
-      lib.watch(
-        doc,
-        {
-          selector:
-            ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
-        },
-        lib.remove
-      );
+      lib.watch(doc, {
+        selector:
+          ".ListingLayout-outerContainer > :nth-child(2) > :nth-child(3)",
+        do: lib.remove,
+        once: false,
+      });
     }
   },
 });
@@ -129,13 +129,13 @@ intercept({
 }).impl({
   regex: /(?<!old\.)reddit\.com/g,
   func(lib, doc, url) {
-    lib.watch(
-      doc,
-      node =>
+    lib.watch(doc, {
+      predicate: node =>
         node.innerText &&
         node.innerText.match(/^More posts from the .* community$/i),
-      node => node.parentNode.remove()
-    );
+      do: node => node.parentNode.remove(),
+      once: false,
+    });
   },
 });
 
@@ -149,8 +149,10 @@ intercept({
   regex: /imgur\.com/g,
   func(lib, doc, url) {
     if (url.pathname === "/")
-      lib.watch(doc, { selector: ".Spinner-contentWrapper" }, lib.remove, {
-        one: true,
+      lib.watch(doc, {
+        selector: ".Spinner-contentWrapper",
+        do: lib.remove,
+        once: true,
       });
   },
 });
@@ -161,7 +163,7 @@ intercept({
 }).impl({
   regex: /imgur\.com/g,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: ".Searchbar" }, lib.remove, { one: true });
+    lib.watch(doc, { selector: ".Searchbar", do: lib.remove, once: true });
   },
 });
 
@@ -172,7 +174,11 @@ intercept({
   .impl({
     regex: RegExp(String.raw`imgur\.com/gallery/\w+/?`),
     func(lib, doc, url) {
-      lib.watch(doc, { selector: ".Gallery-Sidebar" }, lib.hide);
+      lib.watch(doc, {
+        selector: ".Gallery-Sidebar",
+        do: lib.hide,
+        once: false,
+      });
     },
   })
   .impl({
@@ -180,12 +186,11 @@ intercept({
     func(lib, doc, url) {
       // For some reason the image loading fails if the bar is
       // completely gone, so we just hide it instead of removing it
-      lib.watch(
-        doc,
-        { selector: "#side-gallery" },
-        node => (node.style.display = "none"),
-        { one: true }
-      );
+      lib.watch(doc, {
+        selector: "#side-gallery",
+        do: node => (node.style.display = "none"),
+        once: true,
+      });
     },
   });
 
@@ -195,7 +200,7 @@ intercept({
 }).impl({
   regex: /imgur\.com/,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: ".BottomRecirc" }, lib.remove);
+    lib.watch(doc, { selector: ".BottomRecirc", do: lib.remove, once: false });
   },
 });
 
@@ -208,7 +213,7 @@ intercept({
 }).impl({
   regex: /facebook\.com/,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: "div[role=feed]" }, lib.remove);
+    lib.watch(doc, { selector: "div[role=feed]", do: lib.remove, once: false });
   },
 });
 
@@ -237,8 +242,10 @@ intercept({
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: "#hot-network-questions" }, lib.remove, {
-      one: true,
+    lib.watch(doc, {
+      selector: "#hot-network-questions",
+      do: lib.remove,
+      once: true,
     });
   },
 });
@@ -250,7 +257,7 @@ intercept({
   regex: seRe,
   func(lib, doc, url) {
     if (url.pathname === "/")
-      lib.watch(doc, { selector: "#mainbar" }, lib.remove, { one: true });
+      lib.watch(doc, { selector: "#mainbar", do: lib.remove, once: true });
   },
 });
 
@@ -261,7 +268,7 @@ intercept({
   regex: seRe,
   func(lib, doc, url) {
     if (url.pathname === "/questions/")
-      lib.watch(doc, { selector: "#mainbar" }, lib.remove, { one: true });
+      lib.watch(doc, { selector: "#mainbar", do: lib.remove, once: true });
   },
 });
 
@@ -271,7 +278,11 @@ intercept({
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: ".sidebar-related" }, lib.remove, { one: true });
+    lib.watch(doc, {
+      selector: ".sidebar-related",
+      do: lib.remove,
+      once: true,
+    });
   },
 });
 
@@ -281,7 +292,7 @@ intercept({
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: ".sidebar-linked" }, lib.remove, { one: true });
+    lib.watch(doc, { selector: ".sidebar-linked", do: lib.remove, once: true });
   },
 });
 
@@ -291,7 +302,7 @@ intercept({
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: "#feed-link" }, lib.remove, { one: true });
+    lib.watch(doc, { selector: "#feed-link", do: lib.remove, once: true });
   },
 });
 
@@ -301,8 +312,10 @@ intercept({
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: "#sidebar .s-sidebarwidget" }, lib.remove, {
-      one: true,
+    lib.watch(doc, {
+      selector: "#sidebar .s-sidebarwidget",
+      do: lib.remove,
+      once: true,
     });
   },
 });
@@ -313,7 +326,7 @@ intercept({
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: "#left-sidebar" }, lib.hide, { one: true });
+    lib.watch(doc, { selector: "#left-sidebar", do: lib.hide, once: true });
   },
 });
 
@@ -323,6 +336,6 @@ intercept({
 }).impl({
   regex: /stackexchange\.com\/?$/,
   func(lib, doc, url) {
-    lib.watch(doc, { selector: "#question-list" }, lib.remove, { one: true });
+    lib.watch(doc, { selector: "#question-list", do: lib.remove, once: true });
   },
 });
