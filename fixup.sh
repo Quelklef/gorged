@@ -2,26 +2,17 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-function src_files { find | grep -E "\\.$1\$" | grep -vE '/(venv|node_modules|__pycache__|chrome-profile)/'; }
-
-# workflow
-[ "${1:-}" = "-w" ] && {
-  source ./venv/bin/activate
-  src_files 'py|js' | entr -c "$0"
-}
-
 # Format / lint / etc
-py_files=$(src_files py) && IFS=$'\n' py_files=($py_files)
-js_files=$(src_files js) && IFS=$'\n' js_files=($js_files)
-black_args=('--line-length=140')
+py_files=$(./ls-src-files.sh | grep '.py$') && IFS=$'\n' py_files=($py_files)
+js_files=$(./ls-src-files.sh | grep '.js$') && IFS=$'\n' js_files=($js_files)
 npx prettier "${js_files[@]}" --arrow-parens=avoid --write
-black "${py_files[@]}" "${black_args[@]}" --fast  #| run twice with --fast in order to
-black "${py_files[@]}" "${black_args[@]}" --fast  #| deal with https://github.com/psf/black/issues/1629
+black "${py_files[@]}" --line-length=140
 isort "${py_files[@]}"
 flake8 "${py_files[@]}" --max-line-length=140 --ignore=W503,E722,E731,E203,F811
 
-# Regenerate readme
-echo "Updating README.md"
+./as-ext/build.sh
+
+echo "Regenerating README.md ..."
 node -e '
   function joinSurround(delim, items) {
     return delim + items.join(delim) + delim;
