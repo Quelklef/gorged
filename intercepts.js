@@ -43,6 +43,10 @@ function intercept(args) {
   return intercept;
 }
 
+function re(...args) {
+  return new RegExp(String.raw(...args));
+}
+
 // =========================================================================== //
 // Twitter
 
@@ -50,7 +54,7 @@ intercept({
   tags: "id:twitter-remove-homepage-feed site:twitter scroller",
   desc: `Removes the timeline from the homepage of Twitter.`,
 }).impl({
-  regex: /twitter\.com/g,
+  regex: re`twitter\.com`,
   func(lib, doc, url) {
     lib.watch(doc, {
       selector: '[aria-label="Timeline: Your Home Timeline"]',
@@ -64,7 +68,7 @@ intercept({
   tags: "id:twitter-remove-trending site:twitter pronged",
   desc: `Removes the "What's happening" block from Twitter`,
 }).impl({
-  regex: /twitter\.com/g,
+  regex: re`twitter\.com`,
   func(lib, doc, url) {
     lib.watch(doc, {
       selector: '[aria-label="Timeline: Trending now"]',
@@ -78,7 +82,7 @@ intercept({
   tags: "id:twitter-remove-follow-suggestions site:twitter clutter",
   desc: `Removes the "Who to follow" block`,
 }).impl({
-  regex: /twitter\.com/g,
+  regex: re`twitter\.com`,
   func(lib, doc, url) {
     lib.watch(doc, {
       selector: '[aria-label="Who to follow"]',
@@ -95,7 +99,7 @@ intercept({
   tags: "id:reddit-void-homepage site:reddit scroller",
   desc: `Blanks the homepage`,
 }).impl({
-  regex: /(?<!old\.)reddit\.com/g,
+  regex: re`(?<!old\.)reddit\.com`,
   func(lib, doc, url) {
     if (url.pathname === "/")
       lib.watch(doc, {
@@ -110,7 +114,7 @@ intercept({
   tags: "id:reddit-remove-sub-feed site:reddit scroller",
   desc: `Removes the feed from subreddits`,
 }).impl({
-  regex: /(?<!old\.)reddit\.com/g,
+  regex: re`(?<!old\.)reddit\.com`,
   func(lib, doc, url) {
     if (url.pathname.match(RegExp("/r/[^/?]+/?", "g"))) {
       lib.watch(doc, {
@@ -127,7 +131,7 @@ intercept({
   tags: "id:reddit-remove-after-post-feed site:reddit pronged",
   desc: `Removes the feed that appears after posts`,
 }).impl({
-  regex: /(?<!old\.)reddit\.com/g,
+  regex: re`(?<!old\.)reddit\.com`,
   func(lib, doc, url) {
     lib.watch(doc, {
       predicate: node =>
@@ -146,7 +150,7 @@ intercept({
   tags: "id:imgur-remove-homepage-feed site:imgur scroller",
   desc: `Removes the feed from the imgur homepage`,
 }).impl({
-  regex: /imgur\.com/g,
+  regex: re`imgur\.com`,
   func(lib, doc, url) {
     if (url.pathname === "/")
       lib.watch(doc, {
@@ -161,7 +165,7 @@ intercept({
   tags: "id:imgur-remove-search site:imgur",
   desc: `Remove the search bar`,
 }).impl({
-  regex: /imgur\.com/g,
+  regex: re`imgur\.com`,
   func(lib, doc, url) {
     lib.watch(doc, { selector: ".Searchbar", do: lib.remove, once: true });
   },
@@ -198,7 +202,7 @@ intercept({
   tags: "id:imgur-remove-after-post-explore-feed site:imgur scroller",
   desc: `Remove the "Explore Posts" section after posts`,
 }).impl({
-  regex: /imgur\.com/,
+  regex: re`imgur\.com`,
   func(lib, doc, url) {
     lib.watch(doc, { selector: ".BottomRecirc", do: lib.remove, once: false });
   },
@@ -211,7 +215,7 @@ intercept({
   tags: "id:facebook-remove-homepage-feed site:facebook",
   desc: `Remove the homepage feed`,
 }).impl({
-  regex: /facebook\.com/,
+  regex: re`facebook\.com`,
   func(lib, doc, url) {
     lib.watch(doc, { selector: "div[role=feed]", do: lib.remove, once: false });
   },
@@ -221,16 +225,16 @@ intercept({
 // StackExchange (the network)
 
 const seDoms = [
-  /stackexchange\.com/,
-  /\.stackexchange\.com/,
-  /askubuntu\.com/,
-  /mathoverflow\.net/,
-  /serverfault\.com/,
-  /stackoverflow\.com/,
-  /stackexchange\.com/,
-  /stackapps\.com/,
-  /stackmod\.blog/,
-  /superuser\.com/,
+  re`stackexchange\.com`,
+  re`\.stackexchange\.com`,
+  re`askubuntu\.com`,
+  re`mathoverflow\.net`,
+  re`serverfault\.com`,
+  re`stackoverflow\.com`,
+  re`stackexchange\.com`,
+  re`stackapps\.com`,
+  re`stackmod\.blog`,
+  re`superuser\.com`,
 ];
 
 const seRe = RegExp(seDoms.map(regex => "(" + regex.source + ")").join("|"));
@@ -334,7 +338,7 @@ intercept({
   tags: "id:stackexchange-remove-se-homepage-feed site:stackexchange",
   desc: `Removes the feed on the landing page of stackexchange.com`,
 }).impl({
-  regex: /stackexchange\.com\/?$/,
+  regex: re`stackexchange\.com/?$`,
   func(lib, doc, url) {
     lib.watch(doc, { selector: "#question-list", do: lib.remove, once: true });
   },
