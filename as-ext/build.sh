@@ -34,6 +34,12 @@ cat > "$here/manifest.json" << EOF
   "name": "Gorged",
   "version": "$(cat "$here"/../version)",
   "description": "Block distracting content from the web",
+  "permissions": [
+    "storage"
+  ],
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
   "content_scripts": [
     {
       "matches": ["*://*/*"],
