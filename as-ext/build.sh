@@ -2,9 +2,10 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-echo "Building extension..."
-
 here="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+cd "$here"
+
+echo "Building extension..."
 
 cat > "$here/globals.js" << EOF
   (function() {
@@ -33,6 +34,11 @@ cat > "$here/manifest.json" << EOF
 {
   "name": "Gorged",
   "version": "$(cat "$here"/../version)",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{ffffffff-ffff-ffff-ffff-fffffffffffe}"
+    }
+  },
   "description": "Block distracting content from the web",
   "permissions": [
     "storage"
@@ -53,3 +59,5 @@ cat > "$here/manifest.json" << EOF
   "manifest_version": 2
 }
 EOF
+
+zip extension.zip ./*.{js,json,html}
