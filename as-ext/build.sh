@@ -23,9 +23,9 @@ cat > "$here/globals.js" << EOF
 
     module = {};
     (function() {
-      $(cat "$here"/../intercepts.js);
+      $(cat "$here"/../mods.js);
     })();
-    global.LIBS.intercepts = module.exports;
+    global.LIBS.mods = module.exports;
 
   })();
 EOF

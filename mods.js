@@ -1,22 +1,22 @@
 "use strict";
-// == ALL INTERCEPT IMPLS MUST BE TO-STRING-ABLE == //
+// == ALL MOD IMPLS MUST BE toString()-ABLE == //
 
-const intercepts = [];
-module.exports = { intercepts };
+const mods = [];
+module.exports = { mods };
 
 class Impl {
-  constructor({ regex, func, intercept }) {
+  constructor({ regex, func, mod }) {
     if ([typeof regex, typeof func].includes("undefined"))
       throw Error("Bad construction");
 
     this.regex = regex;
     this.func = func;
 
-    this.intercept = intercept;
+    this.mod = mod;
   }
 }
 
-class Intercept {
+class Mod {
   constructor({ tags, desc }) {
     if ([typeof tags, typeof desc].includes("undefined"))
       throw Error("Bad construction");
@@ -32,15 +32,15 @@ class Intercept {
   }
 
   impl(args) {
-    this.impls.push(new Impl({ ...args, intercept: this }));
+    this.impls.push(new Impl({ ...args, mod: this }));
     return this;
   }
 }
 
-function intercept(args) {
-  const intercept = new Intercept(args);
-  intercepts.push(intercept);
-  return intercept;
+function mod(args) {
+  const mod = new Mod(args);
+  mods.push(mod);
+  return mod;
 }
 
 function re(...args) {
@@ -50,7 +50,7 @@ function re(...args) {
 // =========================================================================== //
 // Twitter
 
-intercept({
+mod({
   tags: "id:twitter-remove-homepage-feed site:twitter scroller",
   desc: `Removes the timeline from the homepage of Twitter.`,
 }).impl({
@@ -64,7 +64,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:twitter-remove-trending site:twitter pronged",
   desc: `Removes the "What's happening" block from Twitter`,
 }).impl({
@@ -78,7 +78,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:twitter-remove-follow-suggestions site:twitter clutter",
   desc: `Removes the "Who to follow" block`,
 }).impl({
@@ -95,7 +95,7 @@ intercept({
 // =========================================================================== //
 // Reddit
 
-intercept({
+mod({
   tags: "id:reddit-void-homepage site:reddit scroller",
   desc: `Blanks the homepage`,
 }).impl({
@@ -110,7 +110,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:reddit-remove-sub-feed site:reddit scroller",
   desc: `Removes the feed from subreddits`,
 }).impl({
@@ -127,7 +127,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:reddit-remove-after-post-feed site:reddit pronged",
   desc: `Removes the feed that appears after posts`,
 }).impl({
@@ -146,7 +146,7 @@ intercept({
 // =========================================================================== //
 // Imgur
 
-intercept({
+mod({
   tags: "id:imgur-remove-homepage-feed site:imgur scroller",
   desc: `Removes the feed from the imgur homepage`,
 }).impl({
@@ -161,7 +161,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:imgur-remove-search site:imgur",
   desc: `Remove the search bar`,
 }).impl({
@@ -171,7 +171,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:imgur-remove-right-sidebar site:imgur",
   desc: `Remove the right-hand sidebar from posts`,
 })
@@ -198,7 +198,7 @@ intercept({
     },
   });
 
-intercept({
+mod({
   tags: "id:imgur-remove-after-post-explore-feed site:imgur scroller",
   desc: `Remove the "Explore Posts" section after posts`,
 }).impl({
@@ -211,7 +211,7 @@ intercept({
 // =========================================================================== //
 // Facebook
 
-intercept({
+mod({
   tags: "id:facebook-remove-homepage-feed site:facebook",
   desc: `Remove the homepage feed`,
 }).impl({
@@ -239,7 +239,7 @@ const seDoms = [
 
 const seRe = RegExp(seDoms.map(regex => "(" + regex.source + ")").join("|"));
 
-intercept({
+mod({
   tags:
     "id:stackexchange-remove-hot-network-questions pronged site:stackexchange+",
   desc: `Removes the "Hot Network Questions" sidebar`,
@@ -254,7 +254,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:stackexchange-remove-homepage-feed site:stackexchange+",
   desc: `Removes the "Top Question" feed from Stack Exchange site landing pages`,
 }).impl({
@@ -265,7 +265,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:stackexchange-remove-all-questions-feed site:stackexchange+",
   desc: `Removes the "All Questions" feed under /questsions`,
 }).impl({
@@ -276,7 +276,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:stackexchange-remove-related site:stackexchange+",
   desc: `Removes the "Related" sidebar`,
 }).impl({
@@ -290,7 +290,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:stackexchange-remove-linked site:stackexchange+",
   desc: `Removes the "Linked" sidebar`,
 }).impl({
@@ -300,7 +300,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:stackexchange-remove-rss-link site:stackexchange+ clutter",
   desc: `Removes the "Question feed" link`,
 }).impl({
@@ -310,7 +310,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:stackexchange-remove-sticky-note site:stackexchange+",
   desc: `Removes the yellow "sticky note" on the right side of the page`,
 }).impl({
@@ -324,7 +324,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:stackexchange-remove-left-sidebar site:stackexchange+",
   desc: `Removes the left navigation bar`,
 }).impl({
@@ -334,7 +334,7 @@ intercept({
   },
 });
 
-intercept({
+mod({
   tags: "id:stackexchange-remove-se-homepage-feed site:stackexchange",
   desc: `Removes the feed on the landing page of stackexchange.com`,
 }).impl({

@@ -3,7 +3,7 @@ global = this;
   "use strict";
   const browser = global.browser || global.chrome;
 
-  const { intercepts } = global.LIBS.intercepts;
+  const { mods } = global.LIBS.mods;
 
   function sortBy(array, key, order) {
     const sgn = { asc: 1, desc: -1 }[order];
@@ -34,8 +34,8 @@ global = this;
 
   function candidates(filters, tag) {
     const future = new Set([...filters, tag]);
-    const matching = intercepts.filter(intercept =>
-      [...future].every(filter => intercept.tags.includes(filter))
+    const matching = mods.filter(mod =>
+      [...future].every(filter => mod.tags.includes(filter))
     );
     return matching;
   }
@@ -78,9 +78,7 @@ global = this;
 
     const tags = new Set(
       sortBy(
-        intercepts
-          .flatMap(intercept => intercept.tags)
-          .filter(tag => !tag.startsWith("id:")),
+        mods.flatMap(mod => mod.tags).filter(tag => !tag.startsWith("id:")),
         tag => [tag.startsWith("site:"), tag],
         "desc"
       )
@@ -119,12 +117,12 @@ global = this;
       $sigil.style.marginRight = ".75rem";
     }
 
-    const $interceptTitle = document.createElement("p");
-    $root.append($interceptTitle);
-    $interceptTitle.innerText = "Intercepts";
-    $interceptTitle.style.fontSize = "20px";
-    $interceptTitle.style.fontStyle = "italic";
-    $interceptTitle.style.margin = "2.5rem 0 .75rem 0";
+    const $modTitle = document.createElement("p");
+    $root.append($modTitle);
+    $modTitle.innerText = "Modifications";
+    $modTitle.style.fontSize = "20px";
+    $modTitle.style.fontStyle = "italic";
+    $modTitle.style.margin = "2.5rem 0 .75rem 0";
 
     const $buttons = document.createElement("p");
     $root.append($buttons);
@@ -137,9 +135,7 @@ global = this;
     $enableShown.addEventListener("click", () => {
       enabled = new Set([
         ...enabled,
-        ...intercepts
-          .filter(intercept => passes(filters, intercept))
-          .map(intercept => intercept.id),
+        ...mods.filter(mod => passes(filters, mod)).map(mod => mod.id),
       ]);
       rerender(filters, enabled, $root);
     });
@@ -154,55 +150,55 @@ global = this;
     $disableShown.addEventListener("click", () => {
       enabled = new Set(
         [...enabled].filter(id => {
-          const intercept = intercepts.find(intercept => intercept.id === id);
-          return !passes(filters, intercept);
+          const mod = mods.find(mod => mod.id === id);
+          return !passes(filters, mod);
         })
       );
       rerender(filters, enabled, $root);
     });
 
-    for (const intercept of intercepts) {
-      if (!passes(filters, intercept)) continue;
+    for (const mod of mods) {
+      if (!passes(filters, mod)) continue;
 
-      const isEnabled = enabled.has(intercept.id);
+      const isEnabled = enabled.has(mod.id);
 
-      const $intercept = document.createElement("div");
-      $root.append($intercept);
-      $intercept.style.padding = ".5rem 1.5rem";
-      $intercept.style.marginBottom = "1rem";
-      $intercept.style.boxShadow = "0 1px 5px -3px rgba(0, 0, 0, 0.5)";
-      $intercept.style.borderRadius = "2px";
+      const $mod = document.createElement("div");
+      $root.append($mod);
+      $mod.style.padding = ".5rem 1.5rem";
+      $mod.style.marginBottom = "1rem";
+      $mod.style.boxShadow = "0 1px 5px -3px rgba(0, 0, 0, 0.5)";
+      $mod.style.borderRadius = "2px";
 
-      $intercept.style.position = "relative";
+      $mod.style.position = "relative";
       if (isEnabled) {
-        $intercept.style.border = `1px solid skyblue`;
+        $mod.style.border = `1px solid skyblue`;
       } else {
-        $intercept.style.border = `1px solid rgb(230, 230, 230)`;
+        $mod.style.border = `1px solid rgb(230, 230, 230)`;
       }
-      $intercept.style.borderLeftWidth = "4px";
+      $mod.style.borderLeftWidth = "4px";
 
-      $intercept.style.display = "flex";
+      $mod.style.display = "flex";
 
       const $switch = document.createElement("input");
-      $intercept.append($switch);
+      $mod.append($switch);
       $switch.type = "checkbox";
       if (isEnabled) $switch.checked = "checked";
       $switch.style.cursor = "pointer";
       $switch.style.marginRight = "1rem";
 
       $switch.addEventListener("click", () => {
-        if (isEnabled) enabled.delete(intercept.id);
-        else enabled.add(intercept.id);
+        if (isEnabled) enabled.delete(mod.id);
+        else enabled.add(mod.id);
         rerender(filters, enabled, $root);
       });
 
-      const sites = intercept.tags
+      const sites = mod.tags
         .filter(tag => tag.startsWith("site:"))
         .map(tag => tag.slice("site:".length));
 
       const $desc = document.createElement("span");
-      $intercept.append($desc);
-      $desc.innerText = sites.join(", ") + ": " + intercept.desc;
+      $mod.append($desc);
+      $desc.innerText = sites.join(", ") + ": " + mod.desc;
       $desc.style.flex = "1";
       $desc.style.fontSize = "1rem";
     }

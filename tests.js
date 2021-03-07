@@ -5,15 +5,14 @@ const assert = require("assert");
 const puppeteer = require("puppeteer");
 const chalk = require("chalk");
 
-const { intercepts } = require("./intercepts.js");
+const { mods } = require("./mods.js");
 
 async function sleep(ms) {
   await new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function intercept(id) {
-  if (!intercepts.some(intercept => intercept.id === id))
-    throw Error(`No intercept with id ${id}`);
+function mod(id) {
+  if (!mods.some(mod => mod.id === id)) throw Error(`No mod with id ${id}`);
   return id;
 }
 
@@ -187,7 +186,7 @@ async function hardGoto(page, dest, opts) {
   section("Twitter");
 
   await testPausedResumed(
-    intercept("twitter-remove-homepage-feed"),
+    mod("twitter-remove-homepage-feed"),
     async isPaused => {
       await hardGoto(page, "https://twitter.com", {
         waitUntil: "networkidle2",
@@ -197,19 +196,16 @@ async function hardGoto(page, dest, opts) {
     }
   );
 
-  await testPausedResumed(
-    intercept("twitter-remove-trending"),
-    async isPaused => {
-      await hardGoto(page, "https://twitter.com", {
-        waitUntil: "networkidle2",
-      });
-      const trending = await page.$('[aria-label="Timeline: Trending now"]');
-      assert.equal(await tangible(trending), isPaused);
-    }
-  );
+  await testPausedResumed(mod("twitter-remove-trending"), async isPaused => {
+    await hardGoto(page, "https://twitter.com", {
+      waitUntil: "networkidle2",
+    });
+    const trending = await page.$('[aria-label="Timeline: Trending now"]');
+    assert.equal(await tangible(trending), isPaused);
+  });
 
   await testPausedResumed(
-    intercept("twitter-remove-follow-suggestions"),
+    mod("twitter-remove-follow-suggestions"),
     async isPaused => {
       await hardGoto(page, "https://twitter.com", {
         waitUntil: "networkidle2",
@@ -224,25 +220,22 @@ async function hardGoto(page, dest, opts) {
 
   section("Reddit");
 
-  await testPausedResumed(intercept("reddit-void-homepage"), async isPaused => {
+  await testPausedResumed(mod("reddit-void-homepage"), async isPaused => {
     await page.goto("https://reddit.com", { waitUntil: "networkidle2" });
     const container = await page.$(".ListingLayout-outerContainer");
     assert.equal(await tangible(container), isPaused);
   });
 
-  await testPausedResumed(
-    intercept("reddit-remove-sub-feed"),
-    async isPaused => {
-      await page.goto("https://reddit.com/r/cats", {
-        waitUntil: "networkidle2",
-      });
-      const feed = await page.$(".Post");
-      assert.equal(await tangible(feed), isPaused);
-    }
-  );
+  await testPausedResumed(mod("reddit-remove-sub-feed"), async isPaused => {
+    await page.goto("https://reddit.com/r/cats", {
+      waitUntil: "networkidle2",
+    });
+    const feed = await page.$(".Post");
+    assert.equal(await tangible(feed), isPaused);
+  });
 
   await testPausedResumed(
-    intercept("reddit-remove-after-post-feed"),
+    mod("reddit-remove-after-post-feed"),
     async isPaused => {
       await page.goto("https://www.reddit.com/r/Awww/comments/lvx4n1", {
         waitUntil: "networkidle2",
@@ -259,23 +252,20 @@ async function hardGoto(page, dest, opts) {
 
   section("Imgur");
 
-  await testPausedResumed(
-    intercept("imgur-remove-homepage-feed"),
-    async isPaused => {
-      await page.goto("https://imgur.com", { waitUntil: "networkidle2" });
-      const feed = await page.$(".Spinner-contentWrapper");
-      assert.equal(await tangible(feed), isPaused);
-    }
-  );
+  await testPausedResumed(mod("imgur-remove-homepage-feed"), async isPaused => {
+    await page.goto("https://imgur.com", { waitUntil: "networkidle2" });
+    const feed = await page.$(".Spinner-contentWrapper");
+    assert.equal(await tangible(feed), isPaused);
+  });
 
-  await testPausedResumed(intercept("imgur-remove-search"), async isPaused => {
+  await testPausedResumed(mod("imgur-remove-search"), async isPaused => {
     await page.goto("https://imgur.com");
     const search = await page.$(".Searchbar");
     assert.equal(await tangible(search), isPaused);
   });
 
   await testPausedResumed(
-    intercept("imgur-remove-right-sidebar") + " in /gallery/",
+    mod("imgur-remove-right-sidebar") + " in /gallery/",
     async isPaused => {
       await page.goto("https://imgur.com/gallery/u6tPISU", {
         waitUntil: "networkidle2",
@@ -286,7 +276,7 @@ async function hardGoto(page, dest, opts) {
   );
 
   await testPausedResumed(
-    intercept("imgur-remove-right-sidebar") + " in /r/",
+    mod("imgur-remove-right-sidebar") + " in /r/",
     async isPaused => {
       await page.goto("https://imgur.com/r/cats/s9rgOPX", {
         waitUntil: "networkidle2",
@@ -297,7 +287,7 @@ async function hardGoto(page, dest, opts) {
   );
 
   await testPausedResumed(
-    intercept("imgur-remove-after-post-explore-feed"),
+    mod("imgur-remove-after-post-explore-feed"),
     async isPaused => {
       await page.goto("https://imgur.com/gallery/NObjUFk", {
         waitUntil: "networkidle2",
@@ -317,7 +307,7 @@ async function hardGoto(page, dest, opts) {
   section("Facebook");
 
   await testPausedResumed(
-    intercept("facebook-remove-homepage-feed"),
+    mod("facebook-remove-homepage-feed"),
     async isPaused => {
       await page.goto("https://facebook.com");
       const feed = await page.$("div[role=feed]");
@@ -346,7 +336,7 @@ async function hardGoto(page, dest, opts) {
   section("Stack Exchange");
 
   await testPausedResumed(
-    intercept("stackexchange-remove-hot-network-questions"),
+    mod("stackexchange-remove-hot-network-questions"),
     flaky(3, async isPaused => {
       await page.goto("https://stackoverflow.com/questions/1699748/", {
         waitUntil: "domcontentloaded",
@@ -357,7 +347,7 @@ async function hardGoto(page, dest, opts) {
   );
 
   await testPausedResumed(
-    intercept("stackexchange-remove-homepage-feed"),
+    mod("stackexchange-remove-homepage-feed"),
     async isPaused => {
       await page.goto("https://stackexchange.com/", {
         waitUntil: "domcontentloaded",
@@ -368,7 +358,7 @@ async function hardGoto(page, dest, opts) {
   );
 
   await testPausedResumed(
-    intercept("stackexchange-remove-all-questions-feed"),
+    mod("stackexchange-remove-all-questions-feed"),
     async isPaused => {
       await page.goto("https://worldbuilding.stackexchange.com/questions/", {
         waitUntil: "domcontentloaded",
@@ -379,7 +369,7 @@ async function hardGoto(page, dest, opts) {
   );
 
   await testPausedResumed(
-    intercept("stackexchange-remove-related"),
+    mod("stackexchange-remove-related"),
     flaky(3, async isPaused => {
       await page.goto(
         "https://worldbuilding.stackexchange.com/questions/196909",
@@ -391,7 +381,7 @@ async function hardGoto(page, dest, opts) {
   );
 
   await testPausedResumed(
-    intercept("stackexchange-remove-linked"),
+    mod("stackexchange-remove-linked"),
     flaky(3, async isPaused => {
       await page.goto(
         "https://worldbuilding.stackexchange.com/questions/196909",
@@ -403,7 +393,7 @@ async function hardGoto(page, dest, opts) {
   );
 
   await testPausedResumed(
-    intercept("stackexchange-remove-rss-link"),
+    mod("stackexchange-remove-rss-link"),
     async isPaused => {
       await page.goto(
         "https://worldbuilding.stackexchange.com/questions/196909",
@@ -415,7 +405,7 @@ async function hardGoto(page, dest, opts) {
   );
 
   await testPausedResumed(
-    intercept("stackexchange-remove-sticky-note"),
+    mod("stackexchange-remove-sticky-note"),
     flaky(3, async isPaused => {
       await page.goto(
         "https://worldbuilding.stackexchange.com/questions/196909",
@@ -427,7 +417,7 @@ async function hardGoto(page, dest, opts) {
   );
 
   await testPausedResumed(
-    intercept("stackexchange-remove-left-sidebar"),
+    mod("stackexchange-remove-left-sidebar"),
     async isPaused => {
       await page.goto(
         "https://worldbuilding.stackexchange.com/questions/196909",
@@ -439,7 +429,7 @@ async function hardGoto(page, dest, opts) {
   );
 
   await testPausedResumed(
-    intercept("stackexchange-remove-se-homepage-feed"),
+    mod("stackexchange-remove-se-homepage-feed"),
     async isPaused => {
       await page.goto("https://stackexchange.com/", {
         waitUntil: "domcontentloaded",

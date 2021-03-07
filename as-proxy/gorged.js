@@ -5,7 +5,7 @@ const fs = require("fs");
 const { JSDOM } = require("jsdom");
 
 const { serveFifo } = require("./fifo-server.js");
-const { intercepts } = require("../intercepts.js");
+const { mods } = require("../mods.js");
 const lib = require("../lib.js");
 
 const libCode = fs.readFileSync("../lib.js");
@@ -18,7 +18,7 @@ serveFifo("./ipc.sock", message => {
 
   const url = new URL(urlStr);
 
-  const allImpls = intercepts.flatMap(intercept => intercept.impls);
+  const allImpls = mods.flatMap(mod => mod.impls);
   const matchingImpls = allImpls.filter(impl => !!url.href.match(impl.regex));
 
   if (matchingImpls.length === 0) return dom.serialize();
@@ -50,7 +50,7 @@ serveFifo("./ipc.sock", message => {
 
   for (const impl of matchingImpls) {
     injection.innerHTML += `
-      // ${impl.intercept.id}, impl #${impl.intercept.impls.indexOf(impl)}
+      // ${impl.mod.id}, impl #${impl.mod.impls.indexOf(impl)}
       infallibly(${unevalFunction(impl.func)})(lib, doc, url);
     `;
   }

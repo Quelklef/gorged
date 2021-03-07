@@ -3,7 +3,7 @@ global = this;
   "use strict";
   const browser = global.browser || global.chrome;
 
-  const { intercepts } = global.LIBS.intercepts;
+  const { mods } = global.LIBS.mods;
 
   browser.storage.sync.get("enabled", ({ enabled }) => {
     enabled = new Set(enabled || []);
@@ -12,9 +12,9 @@ global = this;
     const doc = global.document;
     const url = new URL(window.location.href);
 
-    const matchingImpls = intercepts
-      .filter(intercept => enabled.has(intercept.id))
-      .flatMap(intercept => intercept.impls)
+    const matchingImpls = mods
+      .filter(mod => enabled.has(mod.id))
+      .flatMap(mod => mod.impls)
       .filter(impl => url.href.match(impl.regex));
 
     for (const impl of matchingImpls) {

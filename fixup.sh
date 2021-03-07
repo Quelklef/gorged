@@ -6,9 +6,9 @@ IFS=$'\n\t'
 py_files=$(./ls-src-files.sh | grep '.py$') && IFS=$'\n' py_files=($py_files)
 js_files=$(./ls-src-files.sh | grep '.js$') && IFS=$'\n' js_files=($js_files)
 npx prettier "${js_files[@]}" --arrow-parens=avoid --write
-black "${py_files[@]}" --line-length=140
-isort "${py_files[@]}"
-flake8 "${py_files[@]}" --max-line-length=140 --ignore=W503,E722,E731,E203,F811
+./venv/bin/black "${py_files[@]}" --line-length=140
+./venv/bin/isort "${py_files[@]}"
+./venv/bin/flake8 "${py_files[@]}" --max-line-length=140 --ignore=W503,E722,E731,E203,F811
 
 ./as-ext/build.sh
 
@@ -24,37 +24,37 @@ node -e '
     return string.slice(0, string.indexOf(substring)).split("\n").length - 1;
   }
 
-  function makeDocs(markdown, intercepts) {
+  function makeDocs(markdown, mods) {
     const beginRow = rowOf(markdown, "BEGIN FLAG DOCS");
     const endRow = rowOf(markdown, "END FLAG DOCS");
 
     return (
       markdown.split("\n").slice(0, beginRow + 1).join("\n")
       + "\n\n"
-      + makeTable(intercepts)
+      + makeTable(mods)
       + "\n\n"
       + markdown.split("\n").slice(endRow).join("\n")
     );
   }
 
-  function makeTable(intercepts) {
+  function makeTable(mods) {
     return (
       "|Name|Description|"
       + "\n|-|-|"
       + "\n"
-      + intercepts.map(intercept =>
+      + mods.map(mod =>
         joinSurround("|", [
-          "`" + intercept.id + "`",
-          intercept.desc,
+          "`" + mod.id + "`",
+          mod.desc,
         ])
       ).join("\n")
     );
   }
 
   const fs = require("fs");
-  const { intercepts } = require("./intercepts.js");
+  const { mods } = require("./mods.js");
 
   const existingMd = fs.readFileSync("./README.md").toString();
-  const newMd = makeDocs(existingMd, intercepts);
+  const newMd = makeDocs(existingMd, mods);
   fs.writeFileSync("./README.md", newMd);
 '

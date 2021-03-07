@@ -1,9 +1,9 @@
 const { spawn } = require("child_process");
 const fs = require("fs");
 
-const { intercepts } = require("../intercepts.js");
-const bigRegex = intercepts
-  .flatMap(intercept => intercept.impls)
+const { mods } = require("../mods.js");
+const bigRegex = mods
+  .flatMap(mod => mod.impls)
   .map(impl => impl.regex)
   .map(regex => "(" + regex.source + ")")
   .join("|");
