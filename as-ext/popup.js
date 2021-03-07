@@ -177,20 +177,21 @@ global = this;
       }
       $mod.style.borderLeftWidth = "4px";
 
-      $mod.style.display = "flex";
-
-      const $switch = document.createElement("input");
-      $mod.append($switch);
-      $switch.type = "checkbox";
-      if (isEnabled) $switch.checked = "checked";
-      $switch.style.cursor = "pointer";
-      $switch.style.marginRight = "1rem";
-
-      $switch.addEventListener("click", () => {
+      $mod.style.cursor = "pointer";
+      $mod.addEventListener("click", () => {
         if (isEnabled) enabled.delete(mod.id);
         else enabled.add(mod.id);
         rerender(filters, enabled, $root);
       });
+
+      $mod.style.display = "flex";
+
+      const $marker = document.createElement("input");
+      $mod.append($marker);
+      $marker.type = "checkbox";
+      if (isEnabled) $marker.checked = "checked";
+      $marker.style.marginRight = "1rem";
+      $marker.style.cursor = "pointer";
 
       const sites = mod.tags
         .filter(tag => tag.startsWith("site:"))
