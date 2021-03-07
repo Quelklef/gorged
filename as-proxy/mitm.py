@@ -7,6 +7,10 @@ fifo = FifoClient("./ipc.sock")
 fifo.open()
 
 
+with open("./is-paused", "w") as f:
+    f.write("false")
+
+
 def is_paused():
     # TODO: terrible terrible :(
     with open("./is-paused", "r") as f:
