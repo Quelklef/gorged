@@ -38,7 +38,7 @@ source ./venv/bin/activate
 
 case "$target" in
   proxy)
-    ./ls-src-files.sh | entr -cs './fixup.sh && node ./as-proxy/main.js'
+    ./ls-src-files.sh | entr -cs './fixup.sh && cd ./as-proxy/ && node ./main.js'
     ;;
 
   ext)
