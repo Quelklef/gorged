@@ -122,7 +122,7 @@ global = this;
   function candidates(filters, tag) {
     const future = new Set([...filters, tag]);
     const matching = mods.filter(mod =>
-      [...future].every(filter => mod.tags.includes(filter))
+      [...future].every(filter => mod.tags.has(filter))
     );
     return matching;
   }
@@ -177,7 +177,7 @@ global = this;
     `);
 
     const tags = mods
-      .flatMap(mod => mod.tags)
+      .flatMap(mod => [...mod.tags])
       .filter(tag => !tag.startsWith("id:"))
       [deduplicate]()
       [sortBy](tag => [tag.startsWith("site:"), tag], "desc");
@@ -310,7 +310,7 @@ global = this;
                   ; vertical-align: middle
                 "
               >
-                ${mod.tags
+                ${[...mod.tags]
                   .filter(tag => tag.startsWith("site:"))
                   .map(tag => tag.slice("site:".length))
                   .join(", ")}: ${mod.desc}

@@ -44,7 +44,7 @@ node -e '
       + "\n"
       + mods.map(mod =>
         joinSurround("|", [
-          mod.sites.join(", "),
+          [...mod.sites].join(", "),
           mod.desc,
         ])
       ).join("\n")

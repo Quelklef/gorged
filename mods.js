@@ -21,18 +21,26 @@ class Mod {
     if ([typeof tags, typeof desc].includes("undefined"))
       throw Error("Bad construction");
 
-    this.tags = tags.split(" ").filter(t => !!t);
+    this.tags = new Set(tags.split(" ").filter(t => !!t));
     this.desc = desc;
     this.impls = [];
 
-    const ids = this.tags.filter(tag => tag.startsWith("id:"));
+    this.id; // hehe
+  }
+
+  get id() {
+    const ids = [...this.tags].filter(tag => tag.startsWith("id:"));
     if (ids.length !== 1)
       throw Error("Requires exactly one id (tag starting with 'id:')");
-    this.id = ids[0].slice("id:".length);
+    return ids[0].slice("id:".length);
+  }
 
-    this.sites = this.tags
-      .filter(tag => tag.startsWith("site:"))
-      .map(tag => tag.slice("site:".length));
+  get sites() {
+    return new Set(
+      [...this.tags]
+        .filter(tag => tag.startsWith("site:"))
+        .map(tag => tag.slice("site:".length))
+    );
   }
 
   impl(args) {
