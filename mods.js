@@ -52,7 +52,7 @@ function re(...args) {
 
 mod({
   tags: "id:twitter-remove-homepage-feed site:twitter scroller",
-  desc: `Removes the timeline from the homepage of Twitter.`,
+  desc: `remove the homepage timeline`,
 }).impl({
   regex: re`twitter\.com`,
   func(lib, doc, url) {
@@ -66,7 +66,7 @@ mod({
 
 mod({
   tags: "id:twitter-remove-trending site:twitter pronged",
-  desc: `Removes the "What's happening" block from Twitter`,
+  desc: `remove the "What's happening" block`,
 }).impl({
   regex: re`twitter\.com`,
   func(lib, doc, url) {
@@ -80,7 +80,7 @@ mod({
 
 mod({
   tags: "id:twitter-remove-follow-suggestions site:twitter clutter",
-  desc: `Removes the "Who to follow" block`,
+  desc: `remove the "Who to follow" block`,
 }).impl({
   regex: re`twitter\.com`,
   func(lib, doc, url) {
@@ -97,7 +97,7 @@ mod({
 
 mod({
   tags: "id:reddit-void-homepage site:reddit scroller",
-  desc: `Blanks the homepage`,
+  desc: `blank the homepage`,
 }).impl({
   regex: re`(?<!old\.)reddit\.com`,
   func(lib, doc, url) {
@@ -112,7 +112,7 @@ mod({
 
 mod({
   tags: "id:reddit-remove-sub-feed site:reddit scroller",
-  desc: `Removes the feed from subreddits`,
+  desc: `remove subreddit homepage feeds`,
 }).impl({
   regex: re`(?<!old\.)reddit\.com`,
   func(lib, doc, url) {
@@ -129,7 +129,7 @@ mod({
 
 mod({
   tags: "id:reddit-remove-after-post-feed site:reddit pronged",
-  desc: `Removes the feed that appears after posts`,
+  desc: `remove after-post feeds`,
 }).impl({
   regex: re`(?<!old\.)reddit\.com`,
   func(lib, doc, url) {
@@ -148,7 +148,7 @@ mod({
 
 mod({
   tags: "id:imgur-remove-homepage-feed site:imgur scroller",
-  desc: `Removes the feed from the imgur homepage`,
+  desc: `remove the homepage feed`,
 }).impl({
   regex: re`imgur\.com`,
   func(lib, doc, url) {
@@ -163,7 +163,7 @@ mod({
 
 mod({
   tags: "id:imgur-remove-search site:imgur",
-  desc: `Remove the search bar`,
+  desc: `remove the search bar`,
 }).impl({
   regex: re`imgur\.com`,
   func(lib, doc, url) {
@@ -173,7 +173,7 @@ mod({
 
 mod({
   tags: "id:imgur-remove-right-sidebar site:imgur",
-  desc: `Remove the right-hand sidebar from posts`,
+  desc: `remove the right-hand sidebar from posts`,
 })
   .impl({
     regex: RegExp(String.raw`imgur\.com/gallery/\w+/?`),
@@ -200,7 +200,7 @@ mod({
 
 mod({
   tags: "id:imgur-remove-after-post-explore-feed site:imgur scroller",
-  desc: `Remove the "Explore Posts" section after posts`,
+  desc: `remove the after-post feed`,
 }).impl({
   regex: re`imgur\.com`,
   func(lib, doc, url) {
@@ -213,7 +213,7 @@ mod({
 
 mod({
   tags: "id:facebook-remove-homepage-feed site:facebook",
-  desc: `Remove the homepage feed`,
+  desc: `remove the homepage feed`,
 }).impl({
   regex: re`facebook\.com`,
   func(lib, doc, url) {
@@ -241,8 +241,8 @@ const seRe = RegExp(seDoms.map(regex => "(" + regex.source + ")").join("|"));
 
 mod({
   tags:
-    "id:stackexchange-remove-hot-network-questions pronged site:stackexchange+",
-  desc: `Removes the "Hot Network Questions" sidebar`,
+    "id:stackexchange-remove-hot-network-questions pronged site:⋆.stackexchange",
+  desc: `remove the "Hot Network Questions" sidebar`,
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
@@ -255,8 +255,8 @@ mod({
 });
 
 mod({
-  tags: "id:stackexchange-remove-homepage-feed site:stackexchange+",
-  desc: `Removes the "Top Question" feed from Stack Exchange site landing pages`,
+  tags: "id:stackexchange-remove-homepage-feed site:⋆.stackexchange",
+  desc: `remove the "Top Question" feed from the landing page`,
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
@@ -266,8 +266,8 @@ mod({
 });
 
 mod({
-  tags: "id:stackexchange-remove-all-questions-feed site:stackexchange+",
-  desc: `Removes the "All Questions" feed under /questsions`,
+  tags: "id:stackexchange-remove-all-questions-feed site:⋆.stackexchange",
+  desc: `remove the "All Questions" feed under /questsions`,
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
@@ -277,8 +277,8 @@ mod({
 });
 
 mod({
-  tags: "id:stackexchange-remove-related site:stackexchange+",
-  desc: `Removes the "Related" sidebar`,
+  tags: "id:stackexchange-remove-related site:⋆.stackexchange",
+  desc: `remove the "Related" sidebar`,
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
@@ -291,8 +291,8 @@ mod({
 });
 
 mod({
-  tags: "id:stackexchange-remove-linked site:stackexchange+",
-  desc: `Removes the "Linked" sidebar`,
+  tags: "id:stackexchange-remove-linked site:⋆.stackexchange",
+  desc: `remove the "Linked" sidebar`,
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
@@ -301,8 +301,8 @@ mod({
 });
 
 mod({
-  tags: "id:stackexchange-remove-rss-link site:stackexchange+ clutter",
-  desc: `Removes the "Question feed" link`,
+  tags: "id:stackexchange-remove-rss-link site:⋆.stackexchange clutter",
+  desc: `remove the "Question feed" RSS link`,
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
@@ -311,8 +311,8 @@ mod({
 });
 
 mod({
-  tags: "id:stackexchange-remove-sticky-note site:stackexchange+",
-  desc: `Removes the yellow "sticky note" on the right side of the page`,
+  tags: "id:stackexchange-remove-sticky-note site:⋆.stackexchange",
+  desc: `remove the yellow "sticky note" on the right side of the page`,
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
@@ -325,8 +325,8 @@ mod({
 });
 
 mod({
-  tags: "id:stackexchange-remove-left-sidebar site:stackexchange+",
-  desc: `Removes the left navigation bar`,
+  tags: "id:stackexchange-remove-left-sidebar site:⋆.stackexchange",
+  desc: `remove the left navigation bar`,
 }).impl({
   regex: seRe,
   func(lib, doc, url) {
@@ -336,7 +336,7 @@ mod({
 
 mod({
   tags: "id:stackexchange-remove-se-homepage-feed site:stackexchange",
-  desc: `Removes the feed on the landing page of stackexchange.com`,
+  desc: `remove the feed on the landing page of stackexchange.com`,
 }).impl({
   regex: re`stackexchange\.com/?$`,
   func(lib, doc, url) {

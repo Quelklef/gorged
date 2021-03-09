@@ -22,26 +22,26 @@ See [installation](#installation) for installation details.
 
 |Name|Description|
 |-|-|
-|`twitter-remove-homepage-feed`|Removes the timeline from the homepage of Twitter.|
-|`twitter-remove-trending`|Removes the "What's happening" block from Twitter|
-|`twitter-remove-follow-suggestions`|Removes the "Who to follow" block|
-|`reddit-void-homepage`|Blanks the homepage|
-|`reddit-remove-sub-feed`|Removes the feed from subreddits|
-|`reddit-remove-after-post-feed`|Removes the feed that appears after posts|
-|`imgur-remove-homepage-feed`|Removes the feed from the imgur homepage|
-|`imgur-remove-search`|Remove the search bar|
-|`imgur-remove-right-sidebar`|Remove the right-hand sidebar from posts|
-|`imgur-remove-after-post-explore-feed`|Remove the "Explore Posts" section after posts|
-|`facebook-remove-homepage-feed`|Remove the homepage feed|
-|`stackexchange-remove-hot-network-questions`|Removes the "Hot Network Questions" sidebar|
-|`stackexchange-remove-homepage-feed`|Removes the "Top Question" feed from Stack Exchange site landing pages|
-|`stackexchange-remove-all-questions-feed`|Removes the "All Questions" feed under /questsions|
-|`stackexchange-remove-related`|Removes the "Related" sidebar|
-|`stackexchange-remove-linked`|Removes the "Linked" sidebar|
-|`stackexchange-remove-rss-link`|Removes the "Question feed" link|
-|`stackexchange-remove-sticky-note`|Removes the yellow "sticky note" on the right side of the page|
-|`stackexchange-remove-left-sidebar`|Removes the left navigation bar|
-|`stackexchange-remove-se-homepage-feed`|Removes the feed on the landing page of stackexchange.com|
+|`twitter-remove-homepage-feed`|remove the homepage timeline|
+|`twitter-remove-trending`|remove the "What's happening" block|
+|`twitter-remove-follow-suggestions`|remove the "Who to follow" block|
+|`reddit-void-homepage`|blank the homepage|
+|`reddit-remove-sub-feed`|remove subreddit homepage feeds|
+|`reddit-remove-after-post-feed`|remove after-post feeds|
+|`imgur-remove-homepage-feed`|remove the homepage feed|
+|`imgur-remove-search`|remove the search bar|
+|`imgur-remove-right-sidebar`|remove the right-hand sidebar from posts|
+|`imgur-remove-after-post-explore-feed`|remove the after-post feed|
+|`facebook-remove-homepage-feed`|remove the homepage feed|
+|`stackexchange-remove-hot-network-questions`|remove the "Hot Network Questions" sidebar|
+|`stackexchange-remove-homepage-feed`|remove the "Top Question" feed from the landing page|
+|`stackexchange-remove-all-questions-feed`|remove the "All Questions" feed under /questsions|
+|`stackexchange-remove-related`|remove the "Related" sidebar|
+|`stackexchange-remove-linked`|remove the "Linked" sidebar|
+|`stackexchange-remove-rss-link`|remove the "Question feed" RSS link|
+|`stackexchange-remove-sticky-note`|remove the yellow "sticky note" on the right side of the page|
+|`stackexchange-remove-left-sidebar`|remove the left navigation bar|
+|`stackexchange-remove-se-homepage-feed`|remove the feed on the landing page of stackexchange.com|
 
 [comment]: # (END FLAG DOCS)
 
