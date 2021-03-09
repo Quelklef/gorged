@@ -16,32 +16,32 @@
 
 See [installation](#installation) for installation details.
 
-## Effects
+## Site Modifications
 
 [comment]: # (BEGIN FLAG DOCS)
 
-|Name|Description|
+|Website|Effect|
 |-|-|
-|`twitter-remove-homepage-feed`|remove the homepage timeline|
-|`twitter-remove-trending`|remove the "What's happening" block|
-|`twitter-remove-follow-suggestions`|remove the "Who to follow" block|
-|`reddit-void-homepage`|blank the homepage|
-|`reddit-remove-sub-feed`|remove subreddit homepage feeds|
-|`reddit-remove-after-post-feed`|remove after-post feeds|
-|`imgur-remove-homepage-feed`|remove the homepage feed|
-|`imgur-remove-search`|remove the search bar|
-|`imgur-remove-right-sidebar`|remove the right-hand sidebar from posts|
-|`imgur-remove-after-post-explore-feed`|remove the after-post feed|
-|`facebook-remove-homepage-feed`|remove the homepage feed|
-|`stackexchange-remove-hot-network-questions`|remove the "Hot Network Questions" sidebar|
-|`stackexchange-remove-homepage-feed`|remove the "Top Question" feed from the landing page|
-|`stackexchange-remove-all-questions-feed`|remove the "All Questions" feed under /questsions|
-|`stackexchange-remove-related`|remove the "Related" sidebar|
-|`stackexchange-remove-linked`|remove the "Linked" sidebar|
-|`stackexchange-remove-rss-link`|remove the "Question feed" RSS link|
-|`stackexchange-remove-sticky-note`|remove the yellow "sticky note" on the right side of the page|
-|`stackexchange-remove-left-sidebar`|remove the left navigation bar|
-|`stackexchange-remove-se-homepage-feed`|remove the feed on the landing page of stackexchange.com|
+|twitter|remove the homepage timeline|
+|twitter|remove the "What's happening" block|
+|twitter|remove the "Who to follow" block|
+|reddit|blank the homepage|
+|reddit|remove subreddit homepage feeds|
+|reddit|remove after-post feeds|
+|imgur|remove the homepage feed|
+|imgur|remove the search bar|
+|imgur|remove the right-hand sidebar from posts|
+|imgur|remove the after-post feed|
+|facebook|remove the homepage feed|
+|⋆.stackexchange|remove the "Hot Network Questions" sidebar|
+|⋆.stackexchange|remove the "Top Question" feed from the landing page|
+|⋆.stackexchange|remove the "All Questions" feed under /questsions|
+|⋆.stackexchange|remove the "Related" sidebar|
+|⋆.stackexchange|remove the "Linked" sidebar|
+|⋆.stackexchange|remove the "Question feed" RSS link|
+|⋆.stackexchange|remove the yellow "sticky note" on the right side of the page|
+|⋆.stackexchange|remove the left navigation bar|
+|stackexchange|remove the feed on the landing page of stackexchange.com|
 
 [comment]: # (END FLAG DOCS)
 

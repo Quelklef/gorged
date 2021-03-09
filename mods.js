@@ -29,6 +29,10 @@ class Mod {
     if (ids.length !== 1)
       throw Error("Requires exactly one id (tag starting with 'id:')");
     this.id = ids[0].slice("id:".length);
+
+    this.sites = this.tags
+      .filter(tag => tag.startsWith("site:"))
+      .map(tag => tag.slice("site:".length));
   }
 
   impl(args) {

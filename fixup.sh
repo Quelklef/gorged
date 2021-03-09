@@ -39,12 +39,12 @@ node -e '
 
   function makeTable(mods) {
     return (
-      "|Name|Description|"
+      "|Website|Effect|"
       + "\n|-|-|"
       + "\n"
       + mods.map(mod =>
         joinSurround("|", [
-          "`" + mod.id + "`",
+          mod.sites.join(", "),
           mod.desc,
         ])
       ).join("\n")
