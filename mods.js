@@ -105,6 +105,57 @@ mod({
 });
 
 // =========================================================================== //
+// Youtube
+
+mod({
+  tags: "id:youtube-remove-suggestions site:youtube feed",
+  desc: `remove the suggestion sidebar from videos`,
+}).impl({
+  regex: re`youtube\.com/watch\?v=\w+$`,
+  func(lib, doc, url) {
+    lib.watch(doc, {
+      selector: "#related",
+      do: lib.remove,
+      once: false,
+    });
+  },
+});
+
+mod({
+  tags: "id:youtube-remove-like-counts site:youtube scores",
+  desc: `remove the like/dislike bar from under videos`,
+}).impl({
+  regex: re`youtube\.com/watch\?v=\w+$`,
+  func(lib, doc, url) {
+    lib.watch(doc, {
+      selector: "#top-level-buttons > ytd-toggle-button-renderer",
+      do: lib.remove,
+      once: false,
+    });
+
+    lib.watch(doc, {
+      selector: "ytd-sentiment-bar-renderer",
+      do: lib.remove,
+      once: false,
+    });
+  },
+});
+
+mod({
+  tags: "id:youtube-remove-description-subscribe-button site:youtube clutter",
+  desc: `remove the subscribe button from video descriptions`,
+}).impl({
+  regex: re`youtube\.com/watch\?v=\w+$`,
+  func(lib, doc, url) {
+    lib.watch(doc, {
+      selector: "ytd-subscribe-button-renderer",
+      do: lib.remove,
+      once: false,
+    });
+  },
+});
+
+// =========================================================================== //
 // Reddit
 
 mod({

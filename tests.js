@@ -162,6 +162,7 @@ async function hardGoto(page, dest, opts) {
       `--user-data-dir=${chromeProfileLoc}`,
       "--proxy-server=127.0.0.1:8080",
       "--disk-cache-dir=/dev/null", // disable cache
+      "--mute-audio", // disable sound
     ],
   });
 
@@ -212,6 +213,45 @@ async function hardGoto(page, dest, opts) {
       });
       const suggestions = await page.$('[aria-label="Who to follow"]');
       assert.equal(await tangible(suggestions), isPaused);
+    }
+  );
+
+  // ======================================================================== //
+  // Youtube
+
+  section("YouTube");
+
+  await testPausedResumed(mod("youtube-remove-suggestions"), async isPaused => {
+    await hardGoto(page, "https://www.youtube.com/watch?v=Em7u2BeQGP8", {
+      waitUntil: "networkidle2",
+    });
+    await page.waitForTimeout(2000);
+    const suggestions = await page.$$("ytd-compact-video-renderer");
+    assert.equal(suggestions.length > 0, isPaused);
+  });
+
+  await testPausedResumed(mod("youtube-remove-like-counts"), async isPaused => {
+    await hardGoto(page, "https://www.youtube.com/watch?v=Em7u2BeQGP8", {
+      waitUntil: "networkidle2",
+    });
+    await page.waitForTimeout(2000);
+    const buttons = await page.$$(
+      "#top-level-buttons > ytd-toggle-button-renderer"
+    );
+    assert.equal(buttons.length > 0, isPaused);
+    const bar = await page.$("ytd-sentiment-bar-renderer");
+    assert.equal(await tangible(bar), isPaused);
+  });
+
+  await testPausedResumed(
+    mod("youtube-remove-description-subscribe-button"),
+    async isPaused => {
+      await hardGoto(page, "https://www.youtube.com/watch?v=Em7u2BeQGP8", {
+        waitUntil: "networkidle2",
+      });
+      await page.waitForTimeout(2000);
+      const subscribe = await page.$("ytd-subscribe-button-renderer");
+      assert.equal(await tangible(subscribe), isPaused);
     }
   );
 

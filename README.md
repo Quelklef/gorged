@@ -25,6 +25,9 @@ See [installation](#installation) for installation details.
 |twitter|remove the homepage timeline|
 |twitter|remove the "What's happening" block|
 |twitter|remove the "Who to follow" block|
+|youtube|remove the suggestion sidebar from videos|
+|youtube|remove the like/dislike bar from under videos|
+|youtube|remove the subscribe button from video descriptions|
 |reddit|blank the homepage|
 |reddit|remove subreddit homepage feeds|
 |reddit|remove after-post feeds|
