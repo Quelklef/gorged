@@ -4,7 +4,7 @@ const fs = require("fs");
 const { mods } = require("../mods.js");
 const bigRegex = mods
   .flatMap(mod => mod.impls)
-  .map(impl => impl.regex)
+  .map(impl => impl.hostRegex)
   .map(regex => "(" + regex.source + ")")
   .join("|");
 

@@ -19,7 +19,9 @@ serveFifo("./ipc.sock", message => {
   const url = new URL(urlStr);
 
   const allImpls = mods.flatMap(mod => mod.impls);
-  const matchingImpls = allImpls.filter(impl => !!url.href.match(impl.regex));
+  const matchingImpls = allImpls.filter(
+    impl => !!url.href.match(impl.urlRegex)
+  );
 
   if (matchingImpls.length === 0) return dom.serialize();
 

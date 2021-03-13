@@ -15,7 +15,7 @@ global = this;
     const matchingImpls = mods
       .filter(mod => enabled.has(mod.id))
       .flatMap(mod => mod.impls)
-      .filter(impl => url.href.match(impl.regex));
+      .filter(impl => url.href.match(impl.urlRegex));
 
     for (const impl of matchingImpls) {
       infallibly(impl.func)(lib, doc, url);

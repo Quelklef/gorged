@@ -167,7 +167,7 @@ async function hardGoto(page, dest, opts) {
   });
 
   const page = await browser.newPage();
-  await page.setViewport({ width: 1600, height: 900 });
+  await page.setViewport({ width: 1600, height: 1200 });
 
   // disable timeouts
   await page.setDefaultTimeout(0);
@@ -250,7 +250,7 @@ async function hardGoto(page, dest, opts) {
         waitUntil: "networkidle2",
       });
       await page.waitForTimeout(2000);
-      const subscribe = await page.$("ytd-subscribe-button-renderer");
+      const subscribe = await page.$("#subscribe-button");
       assert.equal(await tangible(subscribe), isPaused);
     }
   );
