@@ -120,7 +120,7 @@ mod({
   desc: `remove the suggestion sidebar from videos`,
 }).impl({
   hostRegex: re`^(www\.)?youtube\.com:`,
-  urlRegex: re`youtube\.com/watch\?v=\w+$`,
+  urlRegex: re`youtube\.com/watch\?v=`,
   func(lib, doc, url) {
     lib.watch(doc, {
       selector: "#related",
@@ -135,7 +135,7 @@ mod({
   desc: `remove the like/dislike bar from under videos`,
 }).impl({
   hostRegex: re`^(www\.)?youtube\.com:`,
-  urlRegex: re`youtube\.com/watch\?v=\w+$`,
+  urlRegex: re`youtube\.com/watch\?v=`,
   func(lib, doc, url) {
     lib.watch(doc, {
       selector: "#top-level-buttons > ytd-toggle-button-renderer",
@@ -156,7 +156,7 @@ mod({
   desc: `remove the subscribe button from video descriptions`,
 }).impl({
   hostRegex: re`^(www\.)?youtube\.com:`,
-  urlRegex: re`youtube\.com/watch\?v=\w+$`,
+  urlRegex: re`youtube\.com/watch\?v=`,
   func(lib, doc, url) {
     lib.watch(doc, {
       selector: "#subscribe-button",
