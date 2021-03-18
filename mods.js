@@ -131,6 +131,81 @@ mod({
 });
 
 mod({
+  tags: "id:youtube-void-homepage site:youtube feed",
+  desc: `blank out the landing page`,
+}).impl({
+  hostRegex: re`^(www\.)?youtube\.com:`,
+  urlRegex: re`youtube\.com/?$`,
+  func(lib, doc, url) {
+    lib.watch(doc, {
+      selector: "body",
+      do: lib.remove,
+      once: false,
+    });
+  },
+});
+
+mod({
+  tags: "id:youtube-void-homepage-home site:youtube feed",
+  desc: `blank out the 'home' tab on the landing page`,
+}).impl({
+  hostRegex: re`^(www\.)?youtube\.com:`,
+  urlRegex: re`youtube\.com`,
+  func(lib, doc, url) {
+    lib.watch(doc, {
+      selector: "ytd-browse[page-subtype=home]",
+      do: lib.hide,
+      once: false,
+    });
+  },
+});
+
+mod({
+  tags: "id:youtube-void-homepage-trending site:youtube feed",
+  desc: `blank out the 'trending' tab on the landing page`,
+}).impl({
+  hostRegex: re`^(www\.)?youtube\.com:`,
+  urlRegex: re`youtube\.com`,
+  func(lib, doc, url) {
+    lib.watch(doc, {
+      selector: "ytd-browse[page-subtype=trending]",
+      do: lib.hide,
+      once: false,
+    });
+  },
+});
+
+mod({
+  tags: "id:youtube-void-homepage-subscriptions site:youtube feed",
+  desc: `blank out the 'subscriptions' tab on the landing page`,
+}).impl({
+  hostRegex: re`^(www\.)?youtube\.com:`,
+  urlRegex: re`youtube\.com`,
+  func(lib, doc, url) {
+    lib.watch(doc, {
+      selector: "ytd-browse[page-subtype=subscriptions]",
+      do: lib.hide,
+      once: false,
+    });
+  },
+});
+
+mod({
+  tags: "id:youtube-void-library site:youtube feed",
+  desc: `blank out the 'library' tab on the landing page`,
+}).impl({
+  hostRegex: re`^(www\.)?youtube\.com:`,
+  urlRegex: re`youtube\.com`,
+  func(lib, doc, url) {
+    lib.watch(doc, {
+      selector: "ytd-browse[page-subtype=library]",
+      do: lib.hide,
+      once: false,
+    });
+  },
+});
+
+mod({
   tags: "id:youtube-remove-like-counts site:youtube scores",
   desc: `remove the like/dislike bar from under videos`,
 }).impl({

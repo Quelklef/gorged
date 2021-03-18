@@ -26,6 +26,11 @@ See [installation](#installation) for installation details.
 |twitter|remove the "What's happening" block|
 |twitter|remove the "Who to follow" block|
 |youtube|remove the suggestion sidebar from videos|
+|youtube|blank out the landing page|
+|youtube|blank out the 'home' tab on the landing page|
+|youtube|blank out the 'trending' tab on the landing page|
+|youtube|blank out the 'subscriptions' tab on the landing page|
+|youtube|blank out the 'library' tab on the landing page|
 |youtube|remove the like/dislike bar from under videos|
 |youtube|remove the subscribe button from video descriptions|
 |reddit|blank the homepage|
